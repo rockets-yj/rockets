@@ -231,14 +231,12 @@
             </h6>
             <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/rockets/templates/rocket-admin/adminDashboard.html">
-                <svg class="bi"><use xlink:href="#house-fill"/></svg>
+              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/rocket-admin/adminDashboard.html">
                 서비스
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="/rockets/templates/rocket-admin/adminUser.html">
-                <svg class="bi"><use xlink:href="#file-earmark"/></svg>
+              <a class="nav-link d-flex align-items-center gap-2" href="/rocket-admin/adminUser.html">
                 회원정보
               </a>
             </li>
@@ -251,13 +249,11 @@
           <ul class="nav flex-column mb-auto">
             <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
                 설정
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#door-closed"/></svg>
+              <a class="nav-link d-flex align-items-center gap-2" href='{% url "cklogout" %}'>
                 로그아웃
               </a>
             </li>
@@ -274,12 +270,25 @@
             <tr>
               <th scope="col">NO</th>
               <th scope="col">Name</th>
+              <th scope="col">ID</th>
               <th scope="col">Email</th>
-              <th scope="col">Total Service</th>
+              <th scope="col">date</th>
+              <th scope="col">Total Services</th>
             </tr>
           </thead>
           <tbody id="tbody">
-            <!-- 자바스크립트 파일로 작성함 (adminUser.js) -> html로 변경-->
+            <!-- DB가져오기 -->
+            {% for i in user_list %}
+            <tr>
+                <td> {{i.uno}} </td>
+                <td> {{i.uname}} </td>
+                <td> {{i.uid}} </td>
+                <td> {{i.email}} </td>
+                <td> {{i.regist_date}} </td>
+                <td> {{i.regist_date}} </td>
+                <!-- 마지막 regist_date는 추후 수정 필요 -->
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -287,7 +296,7 @@
   </div>
 </div>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/rockets/static/assets/js/adminUser.js"></script>
+<!-- <script src="/rockets/static/assets/js/adminUser.js"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script><script src="dashboard.js"></script></body>
 </html>

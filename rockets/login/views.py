@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from rocket_admin.models import Userinfo
 from django.views.decorators.csrf import csrf_exempt
 import hashlib
+from rocket_admin import views
 
 
 def userLogin(request) :
@@ -37,8 +38,10 @@ def checkID(request) :
                 #request.session["AUTH_ID"] = getUserinfo.AUTH_ID
                 print(request.session["UID"])
                 # del request.session["UID"] # 세션 삭제 
-                if getUserinfo.uno == 1 : # 관리자로 들어감
-                    return render(request,'hosting/hostingPage.html')
+                if getUserinfo.uno == 1 : # 관리자로 들어감-> uno==1을 관리자로 설정함
+                    return redirect('/rocketadmin/adminLogin/')
+                    #return HttpResponse(views.adminLogin(request))
+                    #return render(request,'rocket-admin/adminUser.html')
                 else :
                     #return render(request,'mainmenu.html')
                     return render(request,'userStatus/userStatus.html')
@@ -56,28 +59,34 @@ def checkID(request) :
     return render(request, "login/login.html")
 
 
-# @csrf_exempt  
-# def cklogout(request) :
-#     request.session.clear() #모든 세션 삭제
-#     request.session['loginOk'] = False
+# 로그인 후 모든세션삭제
+@csrf_exempt  
+def cklogout(request) :
+    request.session.clear() #모든 세션 삭제
+    request.session['loginOk'] = False
+    print("모든세션삭제 체크아웃")
+
+    return redirect('/')
+
+
+# 로그인 검증: 로그인 이후 다시 login 페이지에서 로그인이 유지됐는지 확인
+# 위에 cklogout 후 다시 loginTF 실행시 로그인 내역x로 나오는지 확인
+@csrf_exempt  
+def loginTF(request) :
+    if request.session['loginOk'] is True :
+        print("로그인 OK")
+        return redirect('/')
+    else :
+        print("로그인 내역x")
+        return redirect('/')
     
-#     return redirect('/')
 
 # @csrf_exempt  
 # def ckMainmenu(request) :
 #     if request.session['loginOk'] is True :
-#         if request.session['AUTH_ID'] == 1 :
+#         if request.session['AUTH_ID'] == 1 : 
 #             return redirect('/adm/queenAdmin/')
 #         else :
 #             return render(request,'mainmenu.html')
 #     else :
 #         return redirect('/')
-    
-
-    
-# @csrf_exempt  
-# def loginTF(request) :
-#     if request.session['loginOk'] is True :
-#         return True
-#     else :
-#         return False

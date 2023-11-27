@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.118.2">
-    <title>Rockets Sign-in Page</title>
+    <title>Rockets login Page</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sign-in/">
 
@@ -152,10 +152,10 @@
 
 
     
-<main class="form-signin w-100 m-auto">
+<main class="form-signin w-100 m-auto" style="width: 20%!important;">
   <form method="post" action="{% url 'checkID' %}">
-    <img class="d-block mx-auto mb-4 my-logo" src="{% static '/assets/image/rockets_logo.png' %}" alt="" width="72" height="80">
-    <h1 class="h3 mb-3 fw-normal">Sign in</h1>
+    <img class="d-block mx-auto mb-4 my-logo" src="{% static '/assets/image/rockets_logo.png' %}" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 fw-normal"><center>login</center></h1></br>
 
     <div class="form-floating">
       <input type="id" class="form-control user-id" id="floatingInput" name="uid" minlength="1" placeholder="rockets" required>
@@ -166,7 +166,7 @@
       <input type="password" class="form-control user-pw" id="floatingPassword" name="upwd" minlength="4" placeholder="Password" required>
       <label for="floatingPassword">Password</label>
     </div>
-
+ 
     <div class="form-check text-start my-3">
       <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
       <label class="form-check-label" for="flexCheckDefault">
@@ -175,10 +175,16 @@
     </div>
 
     <center>
-      
       <a href='{% url "userSignup" %}' class="btn btn-primary w-20 py-2" type="submit">Sign up</a>
       <button class="btn btn-primary w-20 py-2" type="submit">login</button>
+      
+
+      <!-- test -->
+      <a href='{% url "cklogout" %}'> 모든세션삭제 </a>
+      <a href='{% url "loginTF" %}'> 로그인검증</a>
+
     </center> 
+
     <p class="mt-5 mb-3 text-body-secondary"><center>&copy; 2023 Rockets</center></p>
   </form>
 </main>

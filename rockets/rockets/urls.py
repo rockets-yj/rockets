@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('rocketadmin/', include('rocket_admin.urls')),
     path('', include('myapp.urls')),
     path('login/', include('login.urls')),
     path('', include('signup.urls')),

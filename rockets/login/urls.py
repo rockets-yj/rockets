@@ -20,7 +20,7 @@ from . import views
 
 urlpatterns = [
     path('login/', views.userLogin, name ="userLogin"),
-    path('checkID',views.checkID, name="checkID")
-    #path('/logintest', views.singin, name='siggin'),
-    #path('checkID',checkID.checkID, name="checkID")
+    path('checkID',views.checkID, name="checkID"),
+    path('cklogout',views.cklogout, name="cklogout"),
+    path('loginTF',views.loginTF, name="loginTF"),
 ]

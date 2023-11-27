@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   {% comment %} <head><script src="../assets/js/color-modes.js"></script> {% endcomment %}
@@ -98,6 +99,11 @@
       .justify-content-between{
         display: flex;
         flex-direction: column;
+      }
+
+      .serviceInfoThead{
+        font-weight: bold;
+        text-align: center;
       }
     </style>
 
@@ -329,15 +335,7 @@
               </tr>
             </thead>
             <tbody id="serviceTbody">
-              {% for srv in serviceList %}
-                <tr class="tr-row" style="text-align:center; vertical-align:middle;">
-                  <td style="width:100px">{{ srv.service_no }} </td>
-                  <td style="width:250px">{{ srv.create_date }}</td>
-                  <td>{{ srv.service_name }}</td>
-                  <td style="width:150px">상태 출력</td>
-                  <td style="width:150px"><button class="btn btn-outline-danger delete-btn">삭제</button></td>
-                </tr> 
-              {% endfor %}
+              {% comment %} js파일 {% endcomment %}
             </tbody>
           </table>
         </div>
@@ -352,16 +350,10 @@
                 <th scope="col">Content</th>
               </tr>
             </thead>
-            <tbody>
-              <script>
-                let serviceList = JSON.parse("{{ serviceList_js | escapejs}}")
-                console.log(serviceList);
-                
-                // 이제 JavaScript 변수 serviceList를 활용하여 원하는 작업을 수행할 수 있습니다.
-              </script>
+            <tbody id="infoTbody">
               <!--fixme: Service 테이블 클릭할 때 작성 / js?-->
               
-              <tr>
+              {% comment %} <tr>
                 <th scope="row">Name</th>
                 <td>Rocket.io</td>
               </tr>
@@ -406,7 +398,7 @@
                 <th scope="row">Address</th>
                 <td>www.rockets-yj.com 혹은 로드밸런서 주소</td> 
               </tr>
-
+              {% endcomment %}
 
 
 
@@ -420,11 +412,39 @@
     </div>
   </div>
   {% comment %} <script src="../assets/dist/js/bootstrap.bundle.min.js"></script> {% endcomment %}
-  {% comment %} <script src="/rockets/static/assets/js/userStatus.js"></script> {% endcomment %}
+  
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script>
   {% comment %} <script src="dashboard.js"></script></body> {% endcomment %}
 
+  <script>
+    var srvList = [
+      {% for srv in serviceList %}
+        {
+          "service_no": "{{ srv.service_no }}",
+          "user_no" : "{{ srv.uno }}",
+          "region_no" : "{{ srv.region_no }}",
+          "region_name" : "{{ srv.region_name }}",
+          "db_no" : "{{ srv.db_no }}",
+          "db_name" : "{{ srv.db_name }}",
+          "frontend_fl" : "{{ srv.frontend_fl }}",
+          "backend_name" : "{{ srv.backend_name }}",
+          "create_date" : "{{ srv.create_date }}",
+          "service_name": "{{ srv.service_name }}",
+          "ecr_uri" : "{{ srv.ecr_uri }}",
+          "load_balancer_name": "{{ srv.load_balancer_name }}",
+          "s3_arn" : "{{ srv.s3_arn }}",
+          "cloudfront_dns" : "{{ srv.cloudfront_dns }}",
+        },
+      {% endfor %}
+    ]
+    
+    {% comment %} console.log(srvList[0].service_no); {% endcomment %}
+
+
+  </script>
+    
+  <script src="{% static 'assets/js/userStatus.js' %} "></script>
 
 
 </html>
