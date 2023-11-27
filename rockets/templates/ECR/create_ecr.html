@@ -1,18 +1,13 @@
-<!-- create_ecr.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create ECR</title>
+    <title>ECR Manager</title>
 </head>
 <body>
-    <h2>Create ECR</h2>
-    <form method="post" action="{% url 'create_ecr' %}">
-        {% csrf_token %}
-        <label for="repository_name">Repository Name:</label>
-        <input type="text" name="repository_name" required>
-        <br>
-        <button type="submit">Create ECR</button>
-    </form>
+    <h1>Create ECR Repository</h1>
+    <button onclick="createECR()">Create ECR</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'assets/js/ecr.js' %}"></script>
 </body>
 </html>

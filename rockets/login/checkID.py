@@ -7,8 +7,8 @@ from rocket_admin.models import Userinfo
 from django.views.decorators.csrf import csrf_exempt
 
 
-@csrf_exempt   
-def checkID(request) :
+@csrf_exempt 
+def checkIDtest(request) :
     request.session['loginOk'] = False
     #print(request.session['loginOk'])
     if True:

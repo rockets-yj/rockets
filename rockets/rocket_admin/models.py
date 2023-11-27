@@ -35,7 +35,7 @@ class Region(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'REGION'
+        db_table = 'Region'
 
 
 class Serviceaws(models.Model):
@@ -50,10 +50,30 @@ class Serviceaws(models.Model):
     s3_arn = models.CharField(db_column='S3_ARN', max_length=255, blank=True, null=True)  # Field name made lowercase.
     cloudfront_dns = models.CharField(db_column='CLOUDFRONT_DNS', max_length=255, blank=True, null=True)  # Field name made lowercase.
     frontend_fl = models.CharField(db_column='FRONTEND_FL', max_length=4,blank=True, null=True)
-
+    create_date = models.DateTimeField(db_column='CREATE_DATE', auto_now_add=True) 
+    
+    def to_json(self):
+        return {
+            "service_no": self.service_no,
+            "uno": self.uno,
+            "region_no": self.region_no,
+            "db_no": self.db_no,
+            "backend_no": self.backend_no,
+            "service_name": self.service_name,
+            "ecr_uri": self.ecr_uri,
+            "load_balancer_name": self.load_balancer_name,
+            "s3_arn": self.s3_arn,
+            "cloudfront_dns": self.cloudfront_dns,
+            "frontend_fl": self.frontend_fl,
+            "create_date": self.create_date
+        }
+    
     class Meta:
         managed = False
         db_table = 'ServiceAws'
+    
+    
+    
 
 
 class Userinfo(models.Model):

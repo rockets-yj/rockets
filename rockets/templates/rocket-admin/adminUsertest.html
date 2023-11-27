@@ -1,3 +1,7 @@
+{% extends "header.html"  %}
+{% load static %}
+{% block body %}
+
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="../assets/js/color-modes.js"></script>
@@ -282,7 +286,17 @@
             </tr>
           </thead>
           <tbody id="tbody">
-            <!-- 자바스크립트 파일로 작성함 (adminUser.js) -> html로 변경-->
+            <!-- DB가져오기  -->
+            {% for i in userList %}
+            <tr>
+                <td> {{i.UNO}} </td>
+                <td> {{i.UNAME}} </td>
+                <td> {{i.UID}} </td>
+                <td> {{i.EMAIL}} </td>
+                <td> {{i.REGIST_DATE}} </td>
+                <td> {{i.REGIST_DATE}} </td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

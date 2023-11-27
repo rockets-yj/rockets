@@ -1,0 +1,7 @@
+<!-- ecr_app/templates/ecr_app/ecr_list.html -->
+<h2>ECR List</h2>
+<ul>
+    {% for ecr in ecrs %}
+        <li>{{ ecr.name }} - {{ ecr.description }}</li>
+    {% endfor %}
+</ul>

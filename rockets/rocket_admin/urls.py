@@ -5,5 +5,6 @@ from . import userlist
 
 
 urlpatterns = [
-    path('userlist', userlist.viewUserlist, name='userlist')
+    #path('userlist', userlist.viewUserlist, name='userlist')
+    #path('user_list/', views.user_list, name="user_list"),
 ]

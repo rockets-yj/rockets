@@ -153,17 +153,17 @@
 
     
 <main class="form-signin w-100 m-auto">
-  <form method="post" action= '{% url "checkID" %}'>
+  <form method="post" action="{% url 'checkID' %}">
     <img class="d-block mx-auto mb-4 my-logo" src="{% static '/assets/image/rockets_logo.png' %}" alt="" width="72" height="80">
     <h1 class="h3 mb-3 fw-normal">Sign in</h1>
 
     <div class="form-floating">
-      <input type="id" class="form-control user-id" id="floatingInput" placeholder="rockets">
+      <input type="id" class="form-control user-id" id="floatingInput" name="uid" minlength="1" placeholder="rockets" required>
       <label for="floatingInput">ID</label>
     </div>
 
     <div class="form-floating">
-      <input type="password" class="form-control user-pw" id="floatingPassword" placeholder="Password">
+      <input type="password" class="form-control user-pw" id="floatingPassword" name="upwd" minlength="4" placeholder="Password" required>
       <label for="floatingPassword">Password</label>
     </div>
 
@@ -175,11 +175,10 @@
     </div>
 
     <center>
-      <a href='{% url "userServiceList" %}' class="btn btn-primary w-20 py-2" role="button">Sign in</a>
       
       <a href='{% url "userSignup" %}' class="btn btn-primary w-20 py-2" type="submit">Sign up</a>
-      <button class="btn btn-primary w-20 py-2" type="submit">checkID</button>
-    </center>
+      <button class="btn btn-primary w-20 py-2" type="submit">login</button>
+    </center> 
     <p class="mt-5 mb-3 text-body-secondary"><center>&copy; 2023 Rockets</center></p>
   </form>
 </main>

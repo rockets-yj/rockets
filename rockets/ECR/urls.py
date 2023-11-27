@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# ecr_app/urls.py
+from .views import create_ecr
 
 urlpatterns = [
-   
+    path('create/', create_ecr, name='create_ecr'),
+    # path('list/', ecr_list, name='ecr_list'),
+    # path('admin/', admin.site.urls),
+    # path('ecr/', include('ecr_app.urls')),
 ]
+

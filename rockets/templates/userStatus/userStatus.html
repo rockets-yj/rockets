@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
-  <head><script src="../assets/js/color-modes.js"></script>
+  {% comment %} <head><script src="../assets/js/color-modes.js"></script> {% endcomment %}
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.118.2">
-    <title>Dashboard Template · Bootstrap v5.3</title>
+    <title>Rockets</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/">
 
@@ -105,11 +105,11 @@
     <!-- Custom styles for this template -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="/rockets/static/assets/css/dashboard.css" rel="stylesheet">
+    {% comment %} <link href="/rockets/static/assets/css/dashboard.css" rel="stylesheet"> {% endcomment %}
 
     <!-- CDN 사용 예시 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> {% endcomment %}
   </head>
   
   <body>
@@ -320,8 +320,8 @@
         <div class="table-responsive small">
           <table class="table table-sm table-hover">
             <thead class="th-row">
-              <tr>
-                <th scope="col">NO</th>
+              <tr style="text-align:center">
+                <th scope="col">Service No.</th>
                 <th scope="col">Date</th>
                 <th scope="col">Name</th>
                 <th scope="col">Status</th>
@@ -329,8 +329,15 @@
               </tr>
             </thead>
             <tbody id="serviceTbody">
-              {% comment %} {{ serviceList|json_script:"serviceListData" }}  json_scipt를 사용하면 변수로 {% endcomment %}
-
+              {% for srv in serviceList %}
+                <tr class="tr-row" style="text-align:center; vertical-align:middle;">
+                  <td style="width:100px">{{ srv.service_no }} </td>
+                  <td style="width:250px">{{ srv.create_date }}</td>
+                  <td>{{ srv.service_name }}</td>
+                  <td style="width:150px">상태 출력</td>
+                  <td style="width:150px"><button class="btn btn-outline-danger delete-btn">삭제</button></td>
+                </tr> 
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -346,7 +353,14 @@
               </tr>
             </thead>
             <tbody>
+              <script>
+                let serviceList = JSON.parse("{{ serviceList_js | escapejs}}")
+                console.log(serviceList);
+                
+                // 이제 JavaScript 변수 serviceList를 활용하여 원하는 작업을 수행할 수 있습니다.
+              </script>
               <!--fixme: Service 테이블 클릭할 때 작성 / js?-->
+              
               <tr>
                 <th scope="row">Name</th>
                 <td>Rocket.io</td>
@@ -405,10 +419,12 @@
       </main>
     </div>
   </div>
-  <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/rockets/static/assets/js/userStatus.js"></script>
+  {% comment %} <script src="../assets/dist/js/bootstrap.bundle.min.js"></script> {% endcomment %}
+  {% comment %} <script src="/rockets/static/assets/js/userStatus.js"></script> {% endcomment %}
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script><script src="dashboard.js"></script></body>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script>
+  {% comment %} <script src="dashboard.js"></script></body> {% endcomment %}
+
 
 
 </html>

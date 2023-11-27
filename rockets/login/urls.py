@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import checkID, views
+from . import views
 
 urlpatterns = [
-    #path('', views.login, name ="login"),
+    path('login/', views.userLogin, name ="userLogin"),
+    path('checkID',views.checkID, name="checkID")
     #path('/logintest', views.singin, name='siggin'),
-    path('checkID',checkID.checkID, name="checkID")
+    #path('checkID',checkID.checkID, name="checkID")
 ]

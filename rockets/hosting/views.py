@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rocket_admin.models import *
+from django.utils import timezone
 
 
 # Create your views here.
@@ -69,7 +70,11 @@ def userHosting(request):
             load_balancer_name = None,
             s3_arn = None,
             cloudfront_dns = None,
+            create_date=timezone.now()
         )
+        print("왜 안됨?")
+        print(timezone.now())
+        print(service_aws_instance.create_date)
         
         service_aws_instance.save()
 

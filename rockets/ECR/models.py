@@ -1,3 +1,7 @@
-from django.db import models
+# # ecr_app/models.py
+# from django.db import models
 
-# Create your models here.
+# # class ECR(models.Model):
+#     name = models.CharField(max_length=100)
+#     description = models.TextField()
+#     # Add other fields as needed
