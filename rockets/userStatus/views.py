@@ -17,16 +17,14 @@ from django.forms.models import model_to_dict
 def viewServiceList(request):
     # 1. userNo를 받아와서 해당 사용자의 서비스 목록 조회하기
     # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
-    # userNo = request.session.get('UNO')
-    userNo = 1
+    userNo = request.session.get('UNO')
+    # userNo = 1
     
     serviceList = (
         Serviceaws.objects
         .filter(uno=userNo)
         .prefetch_related('backend_no', 'region_no', 'db_no')
     )
-    
-
     
     return render(request, 'userStatus/userStatus.html', {'serviceList' : serviceList})
     
@@ -36,16 +34,15 @@ def viewServiceList(request):
 def viewServiceListJs(request):
     # 1. userNo를 받아와서 해당 사용자의 서비스 목록 조회하기
     # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
-    # userNo = request.session.get('UNO')
-    userNo = 1
+    userNo = request.session.get('UNO')
+    print("JSuserNosdfasdffffffffffffdsssssssssssss:")
+    # userNo = 1
     
     serviceList = (
         Serviceaws.objects
         .filter(uno=userNo)
         .prefetch_related('backend_no', 'region_no', 'db_no')
     )
-    
-    
     
     context = {
         "serviceList" : serviceList,
@@ -81,7 +78,6 @@ def viewServiceInfo(request):
     
     service_info = []
     
-    
     for service in serviceData: 
         service_info = model_to_dict(service)
         service_info['region_name'] = service.region_no.region_name
@@ -95,28 +91,3 @@ def viewServiceInfo(request):
     print(json_data)
     
     return JsonResponse({'serviceInfo' : json_data})
-
-
-
-# @csrf_exempt
-# def viewServiceInfo(request):
-#     if request.method == 'POST':
-#         # POST 요청에서 JSON 데이터 추출
-        
-#         data = json.loads(request.body.decode('utf-8'))
-#         serviceListId = data.get('serviceListId')
-        
-#         print(serviceListId)
-        
-#         # 사용자의 서비스 하나를 조회
-#         serviceData = (
-#             Serviceaws.objects
-#             .filter(service_no=serviceListId)
-#             .prefetch_related('backend_no', 'region_no', 'db_no')
-#         )
-
-#         serviceInfo = list(serviceData)
-#         return JsonResponse({'serviceInfo': serviceInfo})
-#     else:
-#         # POST 요청이 아닌 경우 에러 응답
-#         return JsonResponse({'error': '잘못된 요청입니다.'}, status=400)

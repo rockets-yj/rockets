@@ -103,7 +103,15 @@
 
       .serviceInfoThead{
         font-weight: bold;
+        text-align: left;
+        width: 200px !important;
+      }
+
+      .table-blank-class{
+        height: 300px;
         text-align: center;
+        vertical-align: middle;
+        point-event: none !important;
       }
     </style>
 
@@ -222,7 +230,7 @@
   </header>
 
   <div class="container-fluid">
-    <div class="row">
+    <div class="row" style="height:800px">
       <div class="sidebar border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
         <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
           <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto side-nav">
@@ -231,7 +239,7 @@
               </h6>
               <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="{% url 'userStatusPage' %}">
                   <!-- <svg class="bi"><use xlink:href="#house-fill"/></svg> -->
                   <b>Service</b>
                 </a>
@@ -324,7 +332,7 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <h2 style="margin: 20px 0;">Service</h2>
         <div class="table-responsive small">
-          <table class="table table-sm table-hover">
+          <table class="table table-sm">
             <thead class="th-row">
               <tr style="text-align:center">
                 <th scope="col">Service No.</th>
@@ -344,12 +352,6 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
           <h1 class="h2" style="margin-bottom: 20px;">Service Info.</h1>
           <table class="table table-mypage small">
-            <thead>
-              <tr style="text-align: left;">
-                <th scope="col">Service</th>
-                <th scope="col">Content</th>
-              </tr>
-            </thead>
             <tbody id="infoTbody">
               <!--fixme: Service 테이블 클릭할 때 작성 / js?-->
               

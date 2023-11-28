@@ -44,12 +44,14 @@ def checkID(request) :
                     #return render(request,'rocket-admin/adminUser.html')
                 else :
                     #return render(request,'mainmenu.html')
-                    return render(request,'userStatus/userStatus.html')
+                    # return render(request,'userStatus/userStatus.html')
+                    return redirect('/mypage/status/')
             else :
                 request.session['loginOk'] = False
-                return render(request, 'login/login.html',{ 'error' : '비밀번호가 틀렸습니다' })
+                return render(request, 'login/login.html',{ 'error' : '비밀번호를 다시 입력하세요.' })
         else :
             print("아이디가 존재하지 않음")
+            return render(request, 'login/login.html',{ 'error' : '아이디를 다시 입력하세요.' })
         
         
         # if user is not None :

@@ -45,11 +45,11 @@ def userHosting(request):
         
         # 1-2. 세션에 올린 userNo 가져오기
         # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
-        # userNo = request.session.get('UNO')
-        userNo = 1
-        userData = Userinfo.objects.get(uno=userNo)
+        userNo = request.session.get('UNO')
+        # userNo = 1
 
         # 해당하는 regionno에 해당하는 값을 가져옴 (한 행을 다 가져옴)
+        userData = Userinfo.objects.get(uno=userNo)
         regionData = Region.objects.get(region_no=_regionNo)
         backendData = BackendLanguage.objects.get(backend_no=_backendNo)
         dbData = DbList.objects.get(db_no=_dbNo)
@@ -72,9 +72,9 @@ def userHosting(request):
             cloudfront_dns = None,
             create_date=timezone.now()
         )
-        print("왜 안됨?")
-        print(timezone.now())
-        print(service_aws_instance.create_date)
+        print("이제 됨")
+        # print(timezone.now())
+        # print(service_aws_instance.create_date)
         
         service_aws_instance.save()
 

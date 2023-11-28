@@ -184,7 +184,11 @@
       <a href='{% url "loginTF" %}'> 로그인검증</a>
 
     </center> 
-
+    <script>
+      {% if error %}
+        alert("{{ error }}");
+      {% endif %}
+    </script>
     <p class="mt-5 mb-3 text-body-secondary"><center>&copy; 2023 Rockets</center></p>
   </form>
 </main>

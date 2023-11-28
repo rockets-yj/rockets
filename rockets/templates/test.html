@@ -7,7 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.118.2">
-    <title>Rockets</title>
+    <title>Dashboard Template · Bootstrap v5.3</title>
+
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/">
 
     
@@ -201,7 +202,7 @@
 </svg>
 
 <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="/rockets/templates/rocket-admin/adminDashboard.html">관리자</a>
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">Rockets</a>
 
   <ul class="navbar-nav flex-row d-md-none">
     <li class="nav-item text-nowrap">
@@ -223,25 +224,86 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="sidebar border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+    <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
       <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
-        <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto side-nav">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="sidebarMenuLabel">Company name</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
                 <span>Status</span>
             </h6>
             <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/rocket-admin/adminDashboard.html">
-                서비스
+              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                <svg class="bi"><use xlink:href="#house-fill"/></svg>
+                Service
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href='{% url "user_list" %}'>
-                회원정보
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark"/></svg>
+                Hosting
               </a>
             </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#cart"/></svg>
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#people"/></svg>
+                Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#graph-up"/></svg>
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#puzzle"/></svg>
+                Integrations
+              </a>
+            </li> -->
           </ul>
 
+          <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+            <span>Saved reports</span>
+          </h6>
+          <ul class="nav flex-column mb-auto">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Current month
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Last quarter
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Social engagement
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Year-end sale
+              </a>
+            </li>
+          </ul> -->
+
+          <!-- <hr class="my-3"> -->
 
           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
             <span>Users</span>
@@ -249,12 +311,14 @@
           <ul class="nav flex-column mb-auto">
             <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2" href="#">
-                설정
+                <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
+                Settings
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href='{% url "cklogout" %}'>
-                로그아웃
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#door-closed"/></svg>
+                Sign out
               </a>
             </li>
           </ul>
@@ -263,32 +327,77 @@
     </div>
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <h2 style="margin: 20px 0;">회원정보</h2>
+      <!-- <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Service</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+            <svg class="bi"><use xlink:href="#calendar3"/></svg>
+            This week
+          </button>
+        </div>
+      </div> -->
+
+      <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
+
+      <h2 style="margin-top: 20px;">Service</h2>
       <div class="table-responsive small">
-        <table class="table table-sm table-hover">
-          <thead class="th-row">
-            <tr>
+        <table class="table table-sm">
+          <thead>
+            <tr class="th-row">
               <th scope="col">NO</th>
+              <th scope="col">Date</th>
               <th scope="col">Name</th>
-              <th scope="col">ID</th>
-              <th scope="col">Email</th>
-              <th scope="col">date</th>
-              <th scope="col">Total Services</th>
+              <th scope="col">Status</th>
+              <th scope="col">Delete</th>
             </tr>
           </thead>
-          <tbody id="tbody">
-            <!-- DB가져오기 -->
-            {% for i in user_list %}
-            <tr>
-                <td> {{i.uno}} </td>
-                <td> {{i.uname}} </td>
-                <td> {{i.uid}} </td>
-                <td> {{i.email}} </td>
-                <td> {{i.regist_date}} </td>
-                <td> {{i.regist_date}} </td>
-                <!-- 마지막 regist_date는 추후 수정 필요 -->
+          <tbody>
+            <tr class="tr-row">
+              <td>1</td>
+              <td>2023-11-23</td>
+              <td>random</td>
+              <td>data</td>
+              <td><button type="button" class="btn btn-outline-danger delete-btn">삭제</button></td>
             </tr>
-            {% endfor %}
+            <tr class="tr-row">
+              <td>1</td>
+              <td>2023-11-23</td>
+              <td>random</td>
+              <td>data</td>
+              <td><button type="button" class="btn btn-outline-danger delete-btn">삭제</button></td>
+            </tr>
+            <tr class="tr-row">
+              <td>1</td>
+              <td>2023-11-23</td>
+              <td>random</td>
+              <td>data</td>
+              <td><button type="button" class="btn btn-outline-danger delete-btn">삭제</button></td>
+            </tr>
+            <tr class="tr-row">
+              <td>1</td>
+              <td>2023-11-23</td>
+              <td>random</td>
+              <td>data</td>
+              <td><button type="button" class="btn btn-outline-danger delete-btn">삭제</button></td>
+            </tr>
+            <tr class="tr-row">
+              <td>1</td>
+              <td>2023-11-23</td>
+              <td>random</td>
+              <td>data</td>
+              <td><button type="button" class="btn btn-outline-danger delete-btn">삭제</button></td>
+            </tr>
+            <tr class="tr-row">
+              <td>1</td>
+              <td>2023-11-23</td>
+              <td>random</td>
+              <td>data</td>
+              <td><button type="button" class="btn btn-outline-danger delete-btn">삭제</button></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -296,7 +405,8 @@
   </div>
 </div>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-<!-- <script src="/rockets/static/assets/js/adminUser.js"></script> -->
-
+<footer class="my-5 pt-5 text-body-secondary text-center text-small">
+    <p class="mb-1">&copy; 2023 Rocekts</p>
+  </footer>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script><script src="dashboard.js"></script></body>
 </html>
