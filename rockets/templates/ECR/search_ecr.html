@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search ECR Repositories</title>
+</head>
+<body>
+    <h1>Search ECR Repositories</h1>
+
+    <form action="{% url 'search_ecr' %}" method="get">
+        <label for="query">Search:</label>
+        <input type="text" id="query" name="query" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error_message %}
+        <p>Error: {{ error_message }}</p>
+    {% else %}
+        <ul>
+            {% for repository in repositories %}
+                <li>{{ repository.repositoryUri }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,31 @@
+/* hostingPage.html*/
+
+.container {
+  max-width: 1000px;
+}
+
+.main-bottom{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-div{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+img {
+  height: 80px;
+  width: 80px;
+}
+
+
+.needs-validation{
+  width: 70%;
+}
+
+.col-12 {
+  margin-top: 25px !important;
+}

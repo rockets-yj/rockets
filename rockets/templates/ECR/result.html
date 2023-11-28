@@ -1,0 +1,18 @@
+<!-- result.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+</head>
+<body>
+    <h2>Result</h2>
+    {% if output %}
+        <p>ECR created successfully:</p>
+        <pre>{{ output }}</pre>
+    {% elif error_output %}
+        <p>Error creating ECR:</p>
+        <pre>{{ error_output }}</pre>
+    {% endif %}
+</body>
+</html>
