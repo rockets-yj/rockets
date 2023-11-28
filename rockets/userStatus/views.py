@@ -15,8 +15,7 @@ from django.forms.models import model_to_dict
 # 사용자 서비스 조회하기
 @csrf_exempt
 def viewServiceList(request):
-    # 1. userNo를 받아와서 해당 사용자의 서비스 목록 조회하기
-    # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
+    # userNo를 받아와서 해당 사용자의 서비스 목록 조회하기
     userNo = request.session.get('UNO')
     # userNo = 1
     
@@ -30,29 +29,27 @@ def viewServiceList(request):
     
 
 # 사용자 서비스 조회-js
-@csrf_exempt
-def viewServiceListJs(request):
-    # 1. userNo를 받아와서 해당 사용자의 서비스 목록 조회하기
-    # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
-    userNo = request.session.get('UNO')
-    print("JSuserNosdfasdffffffffffffdsssssssssssss:")
-    # userNo = 1
+# @csrf_exempt
+# def viewServiceListJs(request):
+#     # 1. userNo를 받아와서 해당 사용자의 서비스 목록 조회하기
+#     userNo = request.session.get('UNO')
+#     # userNo = 1
     
-    serviceList = (
-        Serviceaws.objects
-        .filter(uno=userNo)
-        .prefetch_related('backend_no', 'region_no', 'db_no')
-    )
+#     serviceList = (
+#         Serviceaws.objects
+#         .filter(uno=userNo)
+#         .prefetch_related('backend_no', 'region_no', 'db_no')
+#     )
     
-    context = {
-        "serviceList" : serviceList,
-        "serviceList_js" : json.dumps([srv.json() for srv in serviceList])
-    }
+#     context = {
+#         "serviceList" : serviceList,
+#         "serviceList_js" : json.dumps([srv.json() for srv in serviceList])
+#     }
     
-    return render(request, 'userStatus/userStatus.html', context)
+#     return render(request, 'userStatus/userStatus.html', context)
     
     
-#사용자 서비스 상세 조회 - js. ajax.
+#사용자 서비스 상세 조회 - js. fetch.
 @csrf_exempt
 def viewServiceInfo(request):
     
@@ -68,13 +65,13 @@ def viewServiceInfo(request):
         .filter(service_no = serviceListId)
         .prefetch_related('backend_no','region_no', 'db_no')
     )
-    print(serviceData)
+    # print(serviceData)
     
     serviceInfo = [model_to_dict(srv) for srv in serviceData]
 
     #serviceInfo = list(serviceData)
     
-    print("aaaaaaaaaaaa",serviceInfo)
+    # print("aaaaaaaaaaaa",serviceInfo)
     
     service_info = []
     
@@ -88,6 +85,6 @@ def viewServiceInfo(request):
             
     #data_to_send = serviceInfo[0]
     json_data = json.dumps(service_info)
-    print(json_data)
+    # print(json_data)
     
     return JsonResponse({'serviceInfo' : json_data})

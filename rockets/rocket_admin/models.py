@@ -52,10 +52,10 @@ class Serviceaws(models.Model):
     frontend_fl = models.CharField(db_column='FRONTEND_FL', max_length=4,blank=True, null=True)
     create_date = models.DateTimeField(db_column='CREATE_DATE', auto_now_add=True) 
     
-    def to_json(self):
+    def json(self):
         return {
             "service_no": self.service_no,
-            "uno": self.uno,
+            "uno": self.uno.json(),
             "region_no": self.region_no,
             "db_no": self.db_no,
             "backend_no": self.backend_no,
@@ -65,7 +65,7 @@ class Serviceaws(models.Model):
             "s3_arn": self.s3_arn,
             "cloudfront_dns": self.cloudfront_dns,
             "frontend_fl": self.frontend_fl,
-            "create_date": self.create_date
+            "create_date": self.create_date,
         }
     
     class Meta:
@@ -84,6 +84,17 @@ class Userinfo(models.Model):
     email = models.CharField(db_column='EMAIL', max_length=255)  
     regist_date = models.DateField(db_column='REGIST_DATE')  
     auth_id = models.IntegerField(db_column='AUTH_ID')  
+    
+    def json(self):
+        return {
+            "uno": self.uno,
+            "uid": self.uid,
+            "upwd": self.upwd,
+            "uname": self.uname,
+            "email": self.email,
+            "regist_date": self.regist_date,
+            "auth_id": self.auth_id
+        }
 
     class Meta:
         managed = False
