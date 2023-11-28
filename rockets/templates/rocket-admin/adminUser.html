@@ -268,7 +268,7 @@
       <div class="table-responsive small">
         <table class="table table-sm table-hover">
           <thead class="th-row">
-            <tr>
+            <tr style="text-align: center">
               <th scope="col">NO</th>
               <th scope="col">Name</th>
               <th scope="col">ID</th>
@@ -280,8 +280,8 @@
           <tbody id="tbody">
             <!-- DB가져오기 -->
             {% for i in user_list %}
-            <tr class="abc">
-                <td> {{i.uno}} </td>
+            <tr class="userList" style="text-align:center">
+                <td name={{ i.uno }} > {{i.uno}} </td>
                 <td> {{i.uname}} </td>
                 <td> {{i.uid}} </td>
                 <td> {{i.email}} </td>
@@ -304,12 +304,12 @@
   </body> 
 
     <script>
-      const userIn = document.getElementsByClassName('abc');
-      for (let i = 0; i < userIn.length; i++){
-        userIn[i].addEventListener('click', () => {
-          window.location.href = '/rockets/templates/test.html';
+      const userList = document.getElementsByClassName('userList');
+      for (let i = 0; i < userList.length; i++) {
+        userList[i].addEventListener('click', () => {
+          window.location.href = '/rocketadmin/user/service/';
           console.log("여기");
-        });
+        })
       }
     </script>
 
