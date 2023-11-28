@@ -79,7 +79,6 @@ def userHosting(request):
         service_aws_instance.save()
 
         new_record_id = service_aws_instance.service_no
-
         result = ""
 
         if new_record_id > 0 :

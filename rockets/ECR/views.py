@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 import boto3
-from . import ecr_create_test
+from ecr_functions import ecr_create_test
 
 def create_ecr(request):
 

@@ -113,6 +113,10 @@
         vertical-align: middle;
         point-event: none !important;
       }
+
+      .main-class::-webkit-scrollbar{
+        display:none;
+      }
     </style>
 
     
@@ -329,9 +333,9 @@
         </div>
       </div>
 
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-class">
         <h2 style="margin: 20px 0;">Service</h2>
-        <div class="table-responsive small">
+        <div class="table-responsive small" style="height:500px;">
           <table class="table table-sm">
             <thead class="th-row">
               <tr style="text-align:center">
@@ -355,7 +359,8 @@
             <tbody id="infoTbody">
               <!--fixme: Service 테이블 클릭할 때 작성 / js?-->
               
-              {% comment %} <tr>
+              {% comment %} 
+              <tr>
                 <th scope="row">Name</th>
                 <td>Rocket.io</td>
               </tr>

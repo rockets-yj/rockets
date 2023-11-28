@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rocket_admin',
     'signup',
     'userStatus',
-    'ECR'
+    'ECR',
+    'ecr_functions'
 ]
 
 MIDDLEWARE = [

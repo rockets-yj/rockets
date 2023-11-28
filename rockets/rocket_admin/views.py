@@ -25,7 +25,7 @@ def user_list(request):
     print(userList)
     return render(request, 'rocket-admin/adminUser.html', userList)
 
-    #admin 계정일 때 가져오기 UID == admin 근데 어차피 지금 uno=1일 경우 admin으로 접속되니까 test001 아이디 사용하면 확인 가능
+    #admin 계정일 때 가져오기 uhth id 이용
     # if request.session['UNO'] == 1 :
     #     userList = {}
     #     userList["userList"] = Userinfo.objects.all()

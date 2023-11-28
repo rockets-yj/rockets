@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
-  <head><script src="../assets/js/color-modes.js"></script>
+  <head>
+    {% comment %} <script src="../assets/js/color-modes.js"></script> {% endcomment %}
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -231,7 +232,7 @@
             </h6>
             <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/rocket-admin/adminDashboard.html">
+              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href='{% url "adminService" %}'>
                 서비스
               </a>
             </li>
@@ -279,7 +280,7 @@
           <tbody id="tbody">
             <!-- DB가져오기 -->
             {% for i in user_list %}
-            <tr>
+            <tr class="abc">
                 <td> {{i.uno}} </td>
                 <td> {{i.uname}} </td>
                 <td> {{i.uid}} </td>
@@ -295,8 +296,22 @@
     </main>
   </div>
 </div>
-<script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+{% comment %} <script src="../assets/dist/js/bootstrap.bundle.min.js"></script> {% endcomment %}
 <!-- <script src="/rockets/static/assets/js/adminUser.js"></script> -->
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script><script src="dashboard.js"></script></body>
-</html>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script><
+    {% comment %} <script src="dashboard.js"></script>{% endcomment %}
+  </body> 
+
+    <script>
+      const userIn = document.getElementsByClassName('abc');
+      for (let i = 0; i < userIn.length; i++){
+        userIn[i].addEventListener('click', () => {
+          window.location.href = '/rockets/templates/test.html';
+          console.log("여기");
+        });
+      }
+    </script>
+
+
+    </html>

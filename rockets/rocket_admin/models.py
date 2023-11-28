@@ -11,8 +11,8 @@ from django.db import models
 
 
 class BackendLanguage(models.Model):
-    backend_no = models.AutoField(db_column='BACKEND_NO', primary_key=True)  # Field name made lowercase.
-    backend_name = models.CharField(db_column='BACKEND_NAME', max_length=255)  # Field name made lowercase.
+    backend_no = models.AutoField(db_column='BACKEND_NO', primary_key=True) 
+    backend_name = models.CharField(db_column='BACKEND_NAME', max_length=255)  
 
     class Meta:
         managed = False
@@ -20,8 +20,8 @@ class BackendLanguage(models.Model):
 
 
 class DbList(models.Model):
-    db_no = models.AutoField(db_column='DB_NO', primary_key=True)  # Field name made lowercase.
-    db_name = models.CharField(db_column='DB_NAME', max_length=255)  # Field name made lowercase.
+    db_no = models.AutoField(db_column='DB_NO', primary_key=True)  
+    db_name = models.CharField(db_column='DB_NAME', max_length=255)  
 
     class Meta:
         managed = False
@@ -29,9 +29,9 @@ class DbList(models.Model):
 
 
 class Region(models.Model):
-    region_no = models.AutoField(db_column='REGION_NO', primary_key=True)  # Field name made lowercase.
-    region_code = models.CharField(db_column='REGION_CODE', max_length=255)  # Field name made lowercase.
-    region_name = models.CharField(db_column='REGION_NAME', max_length=255)  # Field name made lowercase.
+    region_no = models.AutoField(db_column='REGION_NO', primary_key=True)  
+    region_code = models.CharField(db_column='REGION_CODE', max_length=255)  
+    region_name = models.CharField(db_column='REGION_NAME', max_length=255)  
 
     class Meta:
         managed = False
@@ -39,16 +39,16 @@ class Region(models.Model):
 
 
 class Serviceaws(models.Model):
-    service_no = models.AutoField(db_column='SERVICE_NO', primary_key=True)  # Field name made lowercase.
-    uno = models.ForeignKey('Userinfo', models.DO_NOTHING, db_column='UNO')  # Field name made lowercase.
-    region_no = models.ForeignKey(Region, models.DO_NOTHING, db_column='REGION_NO')  # Field name made lowercase.
-    db_no = models.ForeignKey(DbList, models.DO_NOTHING, db_column='DB_NO')  # Field name made lowercase.
-    backend_no = models.ForeignKey(BackendLanguage, models.DO_NOTHING, db_column='BACKEND_NO')  # Field name made lowercase.
-    service_name = models.CharField(db_column='SERVICE_NAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    ecr_uri = models.CharField(db_column='ECR_URI', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    load_balancer_name = models.CharField(db_column='LOAD_BALANCER_NAME', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    s3_arn = models.CharField(db_column='S3_ARN', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    cloudfront_dns = models.CharField(db_column='CLOUDFRONT_DNS', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    service_no = models.AutoField(db_column='SERVICE_NO', primary_key=True) 
+    uno = models.ForeignKey('Userinfo', models.DO_NOTHING, db_column='UNO')  
+    region_no = models.ForeignKey(Region, models.DO_NOTHING, db_column='REGION_NO') 
+    db_no = models.ForeignKey(DbList, models.DO_NOTHING, db_column='DB_NO') 
+    backend_no = models.ForeignKey(BackendLanguage, models.DO_NOTHING, db_column='BACKEND_NO')  
+    service_name = models.CharField(db_column='SERVICE_NAME', max_length=255, blank=True, null=True)  
+    ecr_uri = models.CharField(db_column='ECR_URI', max_length=255, blank=True, null=True) 
+    load_balancer_name = models.CharField(db_column='LOAD_BALANCER_NAME', max_length=255, blank=True, null=True)  
+    s3_arn = models.CharField(db_column='S3_ARN', max_length=255, blank=True, null=True)  
+    cloudfront_dns = models.CharField(db_column='CLOUDFRONT_DNS', max_length=255, blank=True, null=True)  
     frontend_fl = models.CharField(db_column='FRONTEND_FL', max_length=4,blank=True, null=True)
     create_date = models.DateTimeField(db_column='CREATE_DATE', auto_now_add=True) 
     
@@ -77,12 +77,13 @@ class Serviceaws(models.Model):
 
 
 class Userinfo(models.Model):
-    uno = models.AutoField(db_column='UNO', primary_key=True)  # Field name made lowercase.
-    uid = models.CharField(db_column='UID', max_length=255)  # Field name made lowercase.
-    upwd = models.CharField(db_column='UPWD', max_length=255)  # Field name made lowercase.
-    uname = models.CharField(db_column='UNAME', max_length=255)  # Field name made lowercase.
-    email = models.CharField(db_column='EMAIL', max_length=255)  # Field name made lowercase.
-    regist_date = models.DateField(db_column='REGIST_DATE')  # Field name made lowercase.
+    uno = models.AutoField(db_column='UNO', primary_key=True)  
+    uid = models.CharField(db_column='UID', max_length=255)  
+    upwd = models.CharField(db_column='UPWD', max_length=255)  
+    uname = models.CharField(db_column='UNAME', max_length=255) 
+    email = models.CharField(db_column='EMAIL', max_length=255)  
+    regist_date = models.DateField(db_column='REGIST_DATE')  
+    auth_id = models.IntegerField(db_column='AUTH_ID')  
 
     class Meta:
         managed = False

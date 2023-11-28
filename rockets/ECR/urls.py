@@ -17,14 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 # ecr_app/urls.py
-from .views import create_ecr
-from .search_ecr import *
+from . import views
+#from .search_ecr import *
+#from functions import search_ecr
+from ecr_functions import *
 
 urlpatterns = [
-    path('create/', create_ecr, name='create_ecr'),
+    path('create/', views.create_ecr, name='create_ecr'),
     # path('list/', ecr_list, name='ecr_list'),
     # path('admin/', admin.site.urls),
     # path('ecr/', include('ecr_app.urls')),
-    path('search_ecr/', search_ecr, name='search_ecr'),
+    path('search_ecr/', search_ecr.search_ecr, name='search_ecr'),
 ]
 

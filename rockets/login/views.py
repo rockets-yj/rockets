@@ -35,10 +35,10 @@ def checkID(request) :
                 request.session["UPWD"] = getUserinfo.upwd
                 request.session["UNAME"] = getUserinfo.uname
                 request.session["EMAIL"] = getUserinfo.email
-                #request.session["AUTH_ID"] = getUserinfo.AUTH_ID
+                request.session["AUTH_ID"] = getUserinfo.auth_id
                 print(request.session["UID"])
                 # del request.session["UID"] # 세션 삭제 
-                if getUserinfo.uno == 1 : # 관리자로 들어감-> uno==1을 관리자로 설정함
+                if getUserinfo.auth_id == 0 : # 관리자로 들어감-> uno==1을 관리자로 설정함
                     return redirect('/rocketadmin/adminLogin/')
                     #return HttpResponse(views.adminLogin(request))
                     #return render(request,'rocket-admin/adminUser.html')
