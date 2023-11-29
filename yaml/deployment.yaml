@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testdp1             
+  namespace: testns1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: testapp1                                                             # spec.template.metadata.labels.app
+  template:
+    metadata:
+      labels:
+        app: testapp1                                                            # pod의 이름
+    spec:
+      containers:
+        - name: testct1
+          image: pengbai/docker-supermario # 이전에 업로드한 이미지 지정
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080                                                # container의 리슨 포트
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: nodegroup
+                  operator: In
+                  values:
+                  - testng1
+      

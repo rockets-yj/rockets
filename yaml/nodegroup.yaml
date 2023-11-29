@@ -1,0 +1,15 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-demo
+  region: ap-northeast-2
+
+managedNodeGroups:
+  - name: testng1
+    labels:
+      nodegroup: testng1
+    instanceType: t3.medium
+    desiredCapacity: 3
+    volumesize: 20
+#    volumeType: g2

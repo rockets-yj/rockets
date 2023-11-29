@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: testing1
+  namespace: testns1
+  annotations:
+    #kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: integrated-alb
+    alb.ingress.kubernetes.io/group.name: alb-group
+    alb.ingress.kubernetes.io/group.order: '1'                                 # 우선순위
+    alb.ingress.kubernetes.io/scheme: internet-facing                          # internet-facing or internal
+    #alb.ingress.kubernetes.io/subnets: subnet-xxxxxxxxxx, subnet-xxxxxxxxxx    # 배포할 서브넷, alb는 무조건 2개 이상 지정
+    #alb.ingress.kubernetes.io/security-groups: sg-xxxxxxxxxx                   # alb 경우 보안그룹 지정, Inbound HTTP 허용
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'                   # '[{"HTTP": 80}, {"HTTPS": 443}]', 생략 시 HTTP는 80, HTTPS는 443
+    #alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06 # listen-ports가 HTTPS일 경우 사용
+    #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:111111111111:certificate/xxxxxxx-xxxx-xxxx-xxxx-xxxxxxx # listen-ports가 HTTPS일 경우 ACM 인증서 연결
+    #alb.ingress.kubernetes.io/ssl-redirect: '443'                             # listen-port가 '[{"HTTP": 80}, {"HTTPS": 443}]'일 경우 HTTP를 HTTPS로 리다이렉션
+    #alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true  # alb 삭제 보호
+    #alb.ingress.kubernetes.io/waf-acl-id: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxx      # AWS WAF를 id으 연결
+    #alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:ap-northeast-2:111111111111:regional/webacl/xxxxxxx/xxxxxxx-xxxx-xxxx-xxxx-xxxxxxx # AWS WAF를 arn으로 연결
+    alb.ingress.kubernetes.io/target-type: ip                            # instance or ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTP                           # HTTP or HTTPS
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP                       # HTTP or HTTPS
+    alb.ingress.kubernetes.io/healthcheck-path: "/"                            # Healthcheck 경로 지정       
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: testsvc1                                                  # service.yaml의 metadata.name
+              port:
+                number: 8080                                                   # service.yaml의 spec.ports.port

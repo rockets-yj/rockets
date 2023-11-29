@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: testsvc1
+  namespace: testns1
+spec:
+  selector:
+    app: testapp1                                                               # deployment.yaml의 metadata.name
+  type: NodePort
+  ports:
+    - port: 8080                                                               # 서비스 리슨 포트
+      targetPort: 8080                                                           # pod 포트, deployment.yaml의 spec.template.spec.containerPort.ports.containerPort
+      protocol: TCP
