@@ -1,4 +1,4 @@
 apiVersion: v1
 kind: Namespace  #네임 스페이스 생성 
 metadata:
-  name: testns1
+  name: {{ .Values.user.name }}
