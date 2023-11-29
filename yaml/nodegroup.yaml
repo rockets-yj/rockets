@@ -6,7 +6,7 @@ metadata:
   region: ap-northeast-2
 
 managedNodeGroups:
-  - name: {{ .Vlaues.node.name}}
+  - name: {{ .Vlaues.node.name }}
     labels:
       nodegroup: {{ .Vlaues.node.name }}
     instanceType: {{ .Vlaues.node.type}}
