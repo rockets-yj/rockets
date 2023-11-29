@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: testing1
-  namespace: testns1
+  name: {{ .Values.ingress.name }}
+  namespace: {{ .Values.namespace.name }}
   annotations:
     #kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/load-balancer-name: integrated-alb
@@ -11,7 +11,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing                          # internet-facing or internal
     #alb.ingress.kubernetes.io/subnets: subnet-xxxxxxxxxx, subnet-xxxxxxxxxx    # 배포할 서브넷, alb는 무조건 2개 이상 지정
     #alb.ingress.kubernetes.io/security-groups: sg-xxxxxxxxxx                   # alb 경우 보안그룹 지정, Inbound HTTP 허용
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'                   # '[{"HTTP": 80}, {"HTTPS": 443}]', 생략 시 HTTP는 80, HTTPS는 443
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS":443}]'                  # '[{"HTTP": 80}, {"HTTPS": 443}]', 생략 시 HTTP는 80, HTTPS는 443
     #alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06 # listen-ports가 HTTPS일 경우 사용
     #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:111111111111:certificate/xxxxxxx-xxxx-xxxx-xxxx-xxxxxxx # listen-ports가 HTTPS일 경우 ACM 인증서 연결
     #alb.ingress.kubernetes.io/ssl-redirect: '443'                             # listen-port가 '[{"HTTP": 80}, {"HTTPS": 443}]'일 경우 HTTP를 HTTPS로 리다이렉션
@@ -31,6 +31,14 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: testsvc1                                                  # service.yaml의 metadata.name
+              name: {{ .Values.service.name }}                                                  # service.yaml의 metadata.name
               port:
-                number: 8080                                                   # service.yaml의 spec.ports.port
+                number: 80 
+                
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Values.service.name }}                                                  # service.yaml의 metadata.name
+              port:
+                number: 443                                                  # service.yaml의 spec.ports.port
