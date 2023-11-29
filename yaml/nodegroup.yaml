@@ -1,0 +1,15 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-demo
+  region: ap-northeast-2
+
+managedNodeGroups:
+  - name: {{ .Vlaues.node.name }}
+    labels:
+      nodegroup: {{ .Vlaues.node.name }}
+    instanceType: {{ .Vlaues.node.type}}
+    desiredCapacity: {{ .Vlaues.node.dc }}
+    volumesize: {{ .Vlaues.node.size }}
+#    volumeType: g2
