@@ -1,0 +1,23 @@
+services:
+  django:
+    container_name: rockets
+    build:
+      dockerfile: rocketsBuilder
+    image: rockets:latest
+    restart: always
+    volumes:
+      - $PWD/rockets/:/rockets/
+    command: gunicorn --bind 0:2340 rockets.wsgi:applicaton
+
+    expose:
+      - 2340
+
+  nginx: 
+    container_name: rockets_server
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - "$PWD/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf"
+    depends_on:
+      - django
