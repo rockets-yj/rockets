@@ -6,10 +6,10 @@ metadata:
   region: ap-northeast-2
 
 managedNodeGroups:
-  - name: testng1
+  - name: {{ .Vlaues.node.name}}
     labels:
-      nodegroup: testng1
-    instanceType: t3.medium
-    desiredCapacity: 3
-    volumesize: 20
+      nodegroup: {{ .Vlaues.node.name }}
+    instanceType: {{ .Vlaues.node.type}}
+    desiredCapacity: {{ .Vlaues.node.dc }}
+    volumesize: {{ .Vlaues.node.size }}
 #    volumeType: g2
