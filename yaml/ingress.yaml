@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace.name }}
   annotations:
     #kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/load-balancer-name: integrated-alb
+    alb.ingress.kubernetes.io/load-balancer-name: {{ .Values.ingress.name }}
     alb.ingress.kubernetes.io/group.name: alb-group
     alb.ingress.kubernetes.io/group.order: '1'                                 # 우선순위
     alb.ingress.kubernetes.io/scheme: internet-facing                          # internet-facing or internal
@@ -34,7 +34,7 @@ spec:
               name: {{ .Values.service.name }}                                                  # service.yaml의 metadata.name
               port:
                 number: 80 
-                
+
         - path: /
           pathType: Prefix
           backend:
