@@ -4,7 +4,7 @@ metadata:
   name: {{ .Vlaues.deployment.name }}            
   namespace: {{ .Vlaues.namespace.name }}
 spec:
-  replicas: {{ .Vlaues.deplyment.rep }}
+  replicas: {{ .Vlaues.deployment.rep }}
   selector:
     matchLabels:
       app: {{ .Vlaues.app.name }}                                                            # spec.template.metadata.labels.app
