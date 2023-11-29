@@ -19,7 +19,8 @@ from . import ecr_list_test
 
 
 
-def search_ecr(query):
+def search_ecr(servie_name):
+    query = servie_name
     ecr_client = boto3.client('ecr')  # AWS 리전 지정
 
     try:
@@ -28,11 +29,10 @@ def search_ecr(query):
 
         # 검색어에 부합하는 리포지토리 찾기
         matched_repositories = [repo for repo in repositories if query.lower() in repo['repositoryUri'].lower()]
+        print(matched_repositories)
 
-        return matched_repositories
     except Exception as e:
         print(f'검색 실패 : {e}')
-        return []
 
 if __name__ == '__main__':
     #list_ecr()

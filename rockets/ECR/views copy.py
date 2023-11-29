@@ -33,12 +33,12 @@ def delete_repository(request):
 
 def search_result(request):
     query = request.GET.get('query', '')
+    print(query)
 
     try:
-        # 검색 결과를 가져오는 함수 변경
-        repositories = search_ecr.search_ecr(query)
-
-        return render(request, 'ECR/search_result.html', {'filtered_repositories': repositories, 'query': query})
+        repositories = ecr_list_test.list_ecr()
+        return render(request, 'ECR/search_result.html', {'repositories': repositories, 'query': query})
     except Exception as e:
         return render(request, 'ECR/search_result.html', {'error_message': str(e), 'query': query})
+    return render(request, 'ECR/search_result.html')
     

@@ -7,6 +7,7 @@ from . import search_ecr
 from . import search_ecr_uri
 from . import search_ecr_uri_test
 
+
 __all__ = [
     'dockerBuild',
     'ecr_create_delete_test',
@@ -15,5 +16,5 @@ __all__ = [
     'ecr_list_test',
     'search_ecr',
     'search_ecr_uri',
-    'search_ecr_uri_test',
+    'search_ecr_uri_test'
 ]

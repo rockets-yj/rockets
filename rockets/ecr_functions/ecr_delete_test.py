@@ -23,7 +23,7 @@ def delete_ecr(repository_name):
 
 # 스크립트로 직접 실행될 때 수행되는 코드 (콘솔에서 확인)
 if __name__ =='__main__':
-    repo_name = 'pythontoecr'
+    repo_name = 'mario'
 
     # ECR 리포지토리 삭제
     delete_response = delete_ecr(repo_name)

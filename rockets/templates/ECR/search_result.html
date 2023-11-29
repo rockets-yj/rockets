@@ -1,0 +1,55 @@
+{% load static %}
+<h1>Search ECR Repositories</h1>
+
+<form action="{% url 'search_result' %}" method="get">
+    <label for="query">Search:</label>
+    <input type="text" id="query" name="query" value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if error_message %}
+<p>Error: {{ error_message }}</p>
+{% else %}
+<ul>
+    {% for repository in filtered_repositories %}
+    <li>
+        {{ repository.repositoryUri }}
+        <button type="button" class="delete-btn" data-repo-uri="{{ repository.repositoryUri }}">Delete</button>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<script>
+    var csrftoken = "{{ csrf_token }}"; // CSRF 토큰을 전역 변수로 이동
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var deleteButtons = document.querySelectorAll('.delete-btn');
+
+        deleteButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                var repoUri = this.getAttribute('data-repo-uri');
+                deleteRepository(repoUri);
+            });
+        });
+
+        function deleteRepository(repoUri) {
+            fetch('/delete_repository/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({
+                        repo_uri: repoUri
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Repository deleted:', data.message);
+                    // 여기에서 필요한 업데이트 또는 처리를 수행할 수 있습니다.
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+</script>

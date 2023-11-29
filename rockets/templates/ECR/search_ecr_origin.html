@@ -1,11 +1,9 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Search ECR Repositories</title>
 </head>
-
 <body>
     <h1>Search ECR Repositories</h1>
 
@@ -16,14 +14,13 @@
     </form>
 
     {% if error_message %}
-    <p>Error: {{ error_message }}</p>
+        <p>Error: {{ error_message }}</p>
     {% else %}
-    <ul>
-        {% for repository in repositories %}
-        <li>{{ repository.repositoryUri }}</li>
-        {% endfor %}
-    </ul>
+        <ul>
+            {% for repository in repositories %}
+                <li>{{ repository.repositoryUri }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
 </body>
-
 </html>

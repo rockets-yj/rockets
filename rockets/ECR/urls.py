@@ -21,12 +21,17 @@ from . import views
 #from .search_ecr import *
 #from functions import search_ecr
 from ecr_functions import *
+from ECR.views import search_ecr_view, delete_repository
+
+
 
 urlpatterns = [
-    path('create/', views.create_ecr, name='create_ecr'),
+    path('create_ecr/', views.create_ecr_view, name='create_ecr_view'),
     # path('list/', ecr_list, name='ecr_list'),
-    # path('admin/', admin.site.urls),
     # path('ecr/', include('ecr_app.urls')),
-    path('search_ecr/', search_ecr.search_ecr, name='search_ecr'),
+    path('search_ecr/', views.search_ecr_view, name='search_ecr_view'),
+    path('search_result/',views.search_result ,name='search_result'),
+    #path('search_result/', search_ecr_view, name='search_result'),
+    path('delete_repository/', delete_repository, name='delete_repository'),
 ]
 
