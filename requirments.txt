@@ -1,0 +1,9 @@
+Django>=4.0
+psycopg2>=2.8
+gunicorn 
+boto3
+docker
+kubernetes
+pyhelm
+protobuf
+mysqlclient
