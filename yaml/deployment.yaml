@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Vlaues.deployment.name }}            
+  namespace: {{ .Vlaues.namespace.name }}
+spec:
+  replicas: {{ .Vlaues.deployment.rep }}
+  selector:
+    matchLabels:
+      app: {{ .Vlaues.app.name }}                                                            # spec.template.metadata.labels.app
+  template:
+    metadata:
+      labels:
+        app: {{ .Vlaues.app.name }}                                                           # pod의 이름
+    spec:
+      containers:
+        - name: {{ .Vlaues.container.name }}
+          image: {{ .Vlaues.container.image }} # 이전에 업로드한 이미지 지정
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Vlaues.container.port }}                                                # container의 리슨 포트
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: nodegroup
+                  operator: In
+                  values:
+                  - {{ .Vlaues.node.name }}
+      

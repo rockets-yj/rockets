@@ -273,8 +273,8 @@
           </div>
         </div>
 
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-class">
-        <h2 style="margin: 20px 0;">서비스</h2>
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-class" style="padding: 0 100px 0 100px;">
+        <h2 style="margin: 20px 0;">전체 서비스</h2>
         <div class="table-responsive small" style="height:500px;">
           <table class="table table-sm table-hover">
             <thead class="th-row">
@@ -368,31 +368,7 @@
   {% comment %} <script src="dashboard.js"></script></body> {% endcomment %}
 
   <script>
-    var svcList = {{ svcList|safe}};
-    {% comment %} var svcList = [
-      {% for svc in serviceList %}
-        {
-          "service_no": "{{ svc.service_no }}",
-          "user_no" : "{{ svc.uno }}",
-          "region_no" : "{{ svc.region_no }}",
-          "region_name" : "{{ svc.region_name }}",
-          "db_no" : "{{ svc.db_no }}",
-          "db_name" : "{{ svc.db_name }}",
-          "frontend_fl" : "{{ svc.frontend_fl }}",
-          "backend_name" : "{{ svc.backend_name }}",
-          "create_date" : "{{ svc.create_date }}",
-          "service_name": "{{ svc.service_name }}",
-          "ecr_uri" : "{{ svc.ecr_uri }}",
-          "load_balancer_name": "{{ svc.load_balancer_name }}",
-          "s3_arn" : "{{ svc.s3_arn }}",
-          "cloudfront_dns" : "{{ svc.cloudfront_dns }}",
-          "user_name" : "{{ svc.user_name }}",
-        },
-      {% endfor %}
-    ]  {% endcomment %}
-    
-    {% comment %} console.log(svcList[0].service_no); {% endcomment %}
-
+    var svcList = {{ svcList|safe}};   
 
   </script>
     
