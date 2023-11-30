@@ -128,6 +128,10 @@
     <!-- CDN 사용 예시 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> {% endcomment %}
+  
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
   </head>
   
   <body>
@@ -243,7 +247,7 @@
               </h6>
               <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="{% url 'userStatusPage' %}">
+                <a class="nav-link d-flex align-items-center gap-2 active" id="toService" aria-current="page" href="{% url 'userStatusPage' %}">
                   <!-- <svg class="bi"><use xlink:href="#house-fill"/></svg> -->
                   <b>Service</b>
                 </a>
@@ -370,30 +374,26 @@
   {% comment %} <script src="dashboard.js"></script></body> {% endcomment %}
 
   <script>
-    {% comment %} var svcList = [
-      {% for svc in context.serviceList %}
-        {
-          "service_no": "{{ svc.service_no }}",
-          "user_no" : "{{ svc.uno }}",
-          "region_no" : "{{ svc.region_no }}",
-          "region_name" : "{{ svc.region_name }}",
-          "db_no" : "{{ svc.db_no }}",
-          "db_name" : "{{ svc.db_name }}",
-          "frontend_fl" : "{{ svc.frontend_fl }}",
-          "backend_name" : "{{ svc.backend_name }}",
-          "create_date" : "{{ svc.create_date }}",
-          "service_name": "{{ svc.service_name }}",
-          "ecr_uri" : "{{ svc.ecr_uri }}",
-          "load_balancer_name": "{{ svc.load_balancer_name }}",
-          "s3_arn" : "{{ svc.s3_arn }}",
-          "cloudfront_dns" : "{{ svc.cloudfront_dns }}",
-        },
-      {% endfor %}
-      ]   {% endcomment %}
-      
-      
-    
-    {% comment %} var instanceStatus = {{ instance_status }} {% endcomment %}
+    var svcList = [
+    {% for svc in serviceList %}
+      {
+        "service_no": "{{ svc.service_no }}",
+        "user_no" : "{{ svc.uno }}",
+        "region_no" : "{{ svc.region_no }}",
+        "region_name" : "{{ svc.region_name }}",
+        "db_no" : "{{ svc.db_no }}",
+        "db_name" : "{{ svc.db_name }}",
+        "frontend_fl" : "{{ svc.frontend_fl }}",
+        "backend_name" : "{{ svc.backend_name }}",
+        "create_date" : "{{ svc.create_date }}",
+        "service_name": "{{ svc.service_name }}",
+        "ecr_uri" : "{{ svc.ecr_uri }}",
+        "load_balancer_name": "{{ svc.load_balancer_name }}",
+        "s3_arn" : "{{ svc.s3_arn }}",
+        "cloudfront_dns" : "{{ svc.cloudfront_dns }}",
+      },
+    {% endfor %}
+  ]
 
   </script>
     
