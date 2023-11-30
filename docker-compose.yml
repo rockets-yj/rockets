@@ -2,16 +2,19 @@ services:
   django:
     container_name: rockets
     build:
-      dockerfile: rocketsBuilder
-    image: rockets:latest
+      dockerfile: $PWD/rocketsBuilder
     restart: always
     volumes:
       - $PWD/rockets/:/rockets/
+      - static-data:/home/rocket/git-workspace/hwang_git/rockets/rockets/static
     command: >
-      bash -c "python3 manage.py gunicorn --bind 0:2340 rockets.wsgi:applicaton"
+      bash -c " python3 manage.py makemigrations && python3 manage.py migrate  && gunicorn --bind 0:2340 rockets.wsgi:application"
+      
 
     expose:
       - 2340
+    networks:
+      - frontnet
 
   nginx: 
     container_name: rockets_server
@@ -19,6 +22,18 @@ services:
     ports:
       - "80:80"
     volumes:
-      - "$PWD/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf"
+      - /home/rocket/git-workspace/hwang_git/rockets/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - /home/rocket/git-workspace/hwang_git/rockets/rockets/static/:/static
     depends_on:
       - django
+    networks:
+      - frontnet
+
+
+networks:
+  frontnet: 
+    driver: bridge
+
+volumes:
+  db-data:
+  static-data:
