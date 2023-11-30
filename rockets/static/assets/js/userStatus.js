@@ -1,99 +1,135 @@
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/mypage/status/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('네트워크 응답이 올바르지 않습니다.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const svcList = JSON.parse(data.context.serviceList);
+        // const instanceStatus = JSON.parse(data.result.instance_status);
+        console.log("serviceList:", serviceList);
+        // console.log("instanceStatus:", instanceStatus);
+        viewServiceList(svcList);  // 함수 호출 시 () 사용
+    })
+    .catch(error => {
+        console.error('serviceInfo 요청 중 오류 발생:', error.message);
+    });
+})
+
+
+
 
 // optimize: 서비스 조회 기능
-const tbody = document.getElementById('serviceTbody');
 
-// 만약 srvList가 비어있다면 메시지를 화면에 추가
-if (srvList.length === 0) {
-    const tr_blank = document.createElement('tr');
-    const td_blank = document.createElement('td');
-    td_blank.colSpan = 5;  // 테이블 열 전체를 차지하도록 설정
-    td_blank.innerText = "운영하는 서비스가 없습니다.";
-    td_blank.classList.add("table-blank-class");
-    td_blank.style.pointerEvents = "none";
-    tr_blank.appendChild(td_blank);
-    tbody.appendChild(tr_blank);
+/**
+ * 서비스 조회 함수
+ */
+function viewServiceList(svcList){ 
 
-} else {
-    for(let i=0; i<srvList.length; i++){
+    const tbody = document.getElementById('serviceTbody');
     
-        const tr = document.createElement('tr');
-        tr.className = "tr-row";
-        tr.id = "serviceRow";
-        tr.style.textAlign = "center";
-        tr.style.verticalAlign = "middle";
-        tr.style.cursor = "pointer";
-        tr.style.pointerEvents = "hover";
+    // 만약 svcList가 비어있다면 메시지를 화면에 추가
+    if (svcList.length === 0) {
+        const tr_blank = document.createElement('tr');
+        const td_blank = document.createElement('td');
+        td_blank.colSpan = 5;  // 테이블 열 전체를 차지하도록 설정
+        td_blank.innerText = "운영하는 서비스가 없습니다.";
+        td_blank.classList.add("table-blank-class");
+        td_blank.style.pointerEvents = "none";
+        tr_blank.appendChild(td_blank);
+        tbody.appendChild(tr_blank);
     
+    } else {
+        for(let i=0; i<svcList.length; i++){
         
-        const serviceId = document.createElement('input');
-        serviceId.type = "hidden";
-        serviceId.className = "serviceListId-row";
-        serviceId.value = srvList[i].service_no;
-    
-    
-    
-        // optimize: 서비스 상태 상세 조회 (클릭할때)
-        tr.addEventListener('click', () => {
-    
-            const serviceListId = document.getElementsByClassName('serviceListId-row');
-            console.log(serviceListId[i].value);
-    
-            fetch('/mypage/status/serviceInfo/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({serviceListId : serviceListId[i].value})
+            const tr = document.createElement('tr');
+            tr.className = "tr-row";
+            tr.id = "serviceRow";
+            tr.style.textAlign = "center";
+            tr.style.verticalAlign = "middle";
+            tr.style.cursor = "pointer";
+            tr.style.pointerEvents = "hover";
         
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 올바르지 않습니다.');
-                }
-                return response.json();
-            })
-            .then( data => {
-                console.log(data)
-                const serviceinfo = JSON.parse(data.serviceInfo);
-                // console.log(serviceinfo.service_name);
-                serviceInfo(serviceinfo);
-                // serviceInfo 데이터를 여기에서 처리하세요
-            })
-            .catch(error => {
-                console.error('serviceInfo 요청 중 오류 발생:', error);
+            
+            const serviceId = document.createElement('input');
+            serviceId.type = "hidden";
+            serviceId.className = "serviceListId-row";
+            serviceId.value = svcList[i].service_no;
+        
+        
+        
+            // optimize: 서비스 상태 상세 조회 (클릭할때)
+            tr.addEventListener('click', () => {
+        
+                const serviceListId = document.getElementsByClassName('serviceListId-row');
+                // console.log(serviceListId[i].value);
+        
+                fetch('/mypage/status/serviceInfo/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({serviceListId : serviceListId[i].value})
+            
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 올바르지 않습니다.');
+                    }
+                    return response.json();
+                })
+                .then( data => {
+                    const serviceinfo = data.serviceInfo[0];
+                    const serviceStatus = data.serviceInfo[1];
+                    // console.log("serviceinfo:", serviceinfo);
+                    // console.log("serviceStatus:", serviceStatus);
+                    serviceInfo(serviceinfo, serviceStatus);
+                    // serviceInfo 데이터를 여기에서 처리하세요
+                })
+                .catch(error => {
+                    console.error('serviceInfo 요청 중 오류 발생:', error.message);
+                });
             });
-        });
-    
-    
-        const td1 = document.createElement('td');
-        td1.innerText = i+1;
-        td1.style.width = "100px";
-    
-        const td2 = document.createElement('td');
-        td2.innerText = srvList[i].create_date;  
-        td2.style.width = "250px";
-    
-        const td3 = document.createElement('td');
-        td3.innerText = srvList[i].service_name; 
-    
-    
-        // todo: 서비스 생성 부분 나중에 처리하기
-        const td4 = document.createElement('td');
-        td4.innerText = 'serviceStatus'; 
-        td4.style.width = "250px";
-    
-        const td5 = document.createElement('td');
-        td5.style.width = "250px";
-        const delbtn = document.createElement('button');
-        delbtn.type = "button";
-        delbtn.className = "btn btn-outline-danger delete-btn";
-        delbtn.innerText = "삭제";
-        td5.append(delbtn);
         
-    
-        tr.append(td1, td2, td3, td4, td5, serviceId);
-        tbody.append(tr);
-    
+        
+            const td1 = document.createElement('td');
+            td1.innerText = i+1;
+            td1.style.width = "100px";
+        
+            const td2 = document.createElement('td');
+            td2.style.width = "250px";
+            td2.innerText = svcList[i].create_date
+        
+            const td3 = document.createElement('td');
+            var svcName = svcList[i].service_name;
+            td3.innerText = svcName; 
+        
+        
+            // todo: 서비스 생성 부분 나중에 처리하기
+            const td4 = document.createElement('td');
+            td4.innerText = "serviceStatus"; 
+            td4.style.width = "250px";
+        
+            const td5 = document.createElement('td');
+            td5.style.width = "250px";
+            const delbtn = document.createElement('button');
+            delbtn.type = "button";
+            delbtn.className = "btn btn-outline-danger delete-btn";
+            delbtn.innerText = "삭제";
+            td5.append(delbtn);
+            
+        
+            tr.append(td1, td2, td3, td4, td5, serviceId);
+            tbody.append(tr);
+        
+        }
     }
 }
 
@@ -103,9 +139,10 @@ const infoTbody = document.getElementById('infoTbody');
 
 /** 
  * 서비스 상세 정보 출력 함수
- * @param {serviceInfo} fetch로 불러온 서비스 상세 정보
+ * @param {serviceInfo} 서비스 상세 정보
+ * @param {serviceStatus} 서비스 상태 정보
 */
-const serviceInfo = (serviceInfo) => {
+const serviceInfo = (serviceInfo, serviceStatus) => {
 
     document.getElementById("infoTbody").innerText = "";
 
@@ -118,7 +155,9 @@ const serviceInfo = (serviceInfo) => {
     td11.classList.add("serviceInfoThead");
     
     const td12 = document.createElement('td');
-    td12.innerText = serviceInfo.service_name;
+    var serviceName = serviceInfo.service_name.slice(0, -20);
+    
+    td12.innerText = serviceName;
 
     tr1.append(td11, td12);
 
@@ -132,7 +171,49 @@ const serviceInfo = (serviceInfo) => {
     td21.classList.add("serviceInfoThead");
 
     const td22 = document.createElement('td');
-    td22.innerText = "Running";  //fixme: 상태 정보 추후 수정하기
+    
+    let sts =[]
+    let stsText = [];
+    let stsFontColor = [];
+
+    sts = ["running", "terminated", "stopped", "stopping"];
+    stsText = ["Running", "Terminated", "Stopped", "Stopping"];
+    stsFontColor = ["green", "red", "orange", "orange"];
+
+    // console.log(sts[1]);
+
+    for(let i=0; i<sts.length; i++){
+        if(serviceStatus.toLowerCase() == sts[i]) {
+            td22.innerText = stsText[i];
+            td22.style.color = stsFontColor[i];
+            td22.style.fontWeight = "bold";
+        } else {
+            td22.innerText = "Terminated";
+            td22.style.color = "red";
+            td22.style.fontWeight = "bold";
+        }
+    }
+
+
+    // if(serviceStatus.toLowerCase()  == "running") {
+    //     td22.innerText = "Running";
+    //     td22.style.color = "green";
+    //     td22.style.fontWeight = "bold";
+    // } else if (serviceStatus.toLowerCase()  == "terminated") {
+    //     td22.innerText = "Terminated";
+    //     td22.style.color = "red";
+    //     td22.style.fontWeight = "bold";
+    // } else if (serviceStatus.toLowerCase()  == "stopped") {
+    //     td22.innerText = "Stopped";
+    //     td22.style.color = "orange";
+    //     td22.style.fontWeight = "bold";
+    // } else if (serviceStatus.toLowerCase()  == "stopping"){
+    //     td22.innerText = "Stopping";
+    //     td22.style.color = "orange";
+    //     td22.style.fontWeight = "bold";
+    // }
+    
+    // td22.innerText = serviceStatus;  //fixme: 상태 정보 추후 수정하기
 
     tr2.append(td21, td22);
 
@@ -146,7 +227,35 @@ const serviceInfo = (serviceInfo) => {
     td31.classList.add("serviceInfoThead");
 
     const td32 = document.createElement('td');
-    td32.innerText = serviceInfo.today;
+    let serviceTime = serviceInfo.create_date;
+        
+    // +00:00 제거
+    let formattedTime = serviceTime.replace(/\+00:00$/, '');
+
+    // Date 객체로 변환
+    let dateObject = new Date(formattedTime);
+
+    // 7시간 추가
+    dateObject.setHours(dateObject.getHours() + 9);
+
+    // 결과 출력
+    // 날짜 포맷 지정
+    var options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        hour12: false,
+        minute: '2-digit',
+        second: '2-digit',
+        // timeZoneName: 'short',
+        timeZone: 'Asia/Seoul' // 또는 'KST'로 대체 가능
+    };
+
+    var formattedDate = new Intl.DateTimeFormat('ko-KR', options).format(dateObject);
+
+    td32.innerText = formattedDate;
+    // td32.innerText = serviceInfo.today;
 
     tr3.append(td31, td32);
 
