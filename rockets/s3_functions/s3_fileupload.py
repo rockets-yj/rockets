@@ -6,9 +6,10 @@ session = boto3.Session (
     
     aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
     aws_secret_access_key= os.environ.get('AWS_SECRET_ACCESS_KEY'),
-    region_name = os.environ.get('AWS_REGION')
+    region_name= os.environ.get('AWS_REGION')
 )
-aws_region = 'ap-northeast-2'
+
+aws_region = os.environ.get('AWS_REGION')
 
 
 def upload_to_s3(local_file_path, bucket_name, s3_file_path):
@@ -31,7 +32,7 @@ def upload_to_s3(local_file_path, bucket_name, s3_file_path):
 
 if __name__ == '__main__':
     # 로컬 파일 경로
-    local_file_path = 'pythonForAws/s3_upload_test.txt'
+    local_file_path = '/home/rocket/git-workspace/songgit/rockets/rockets/s3_functions/s3_upload_test.txt'
     
     # S3 버킷 이름
     bucket_name = 'rockets-yj'
