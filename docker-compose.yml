@@ -7,7 +7,8 @@ services:
     restart: always
     volumes:
       - $PWD/rockets/:/rockets/
-    command: gunicorn --bind 0:2340 rockets.wsgi:applicaton
+    command: >
+      bash -c "python3 manage.py gunicorn --bind 0:2340 rockets.wsgi:applicaton"
 
     expose:
       - 2340
