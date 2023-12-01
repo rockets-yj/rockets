@@ -1,0 +1,56 @@
+{% load static %}
+<h1>Search ECR Repositories</h1>
+
+<form action="{% url 'search_result' %}" method="get">
+    <label for="query">Search:</label>
+    <input type="text" id="query" name="query" value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if error_message %}
+<p>Error: {{ error_message }}</p>
+{% else %}
+<ul>
+    {% for repository in filtered_repositories %}
+    <li>
+        {{ repository.repositoryUri }}<button type="button" class="delete-btn" data-repo-name="{{ repository.repositoryName }}" data-repo-uri=" {{ repository.repositoryUri }} ">Delete</button>
+
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<script>
+    var csrftoken = "{{ csrf_token }}"; // CSRF 토큰을 전역 변수로 이동
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var deleteButtons = document.querySelectorAll('.delete-btn');
+
+        deleteButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                var repoName = this.getAttribute('data-repo-name');
+                deleteRepository(repoName);
+            });
+        });
+
+        function deleteRepository(repoName) {
+            // 삭제 요청을 서버로 보냅니다.
+            console.log(encodeURIComponent(repoName))
+            fetch('/ecr/delete_ecr/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: 'repo_name=' + encodeURIComponent(repoName),
+            })
+
+            .then(response => response.json())
+                .then(data => {
+                    console.log(data.message || data.error_message);
+                    // 여기에서 필요한 업데이트 또는 처리를 수행할 수 있습니다.
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
