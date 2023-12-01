@@ -174,7 +174,7 @@ const serviceInfo = (serviceInfo, serviceStatus) => {
     td11.classList.add("serviceInfoThead");
     
     const td12 = document.createElement('td');
-    var serviceName = serviceInfo.service_name.slice(0, -20);
+    var serviceName = serviceInfo.service_name;
     
     td12.innerText = serviceName;
 
