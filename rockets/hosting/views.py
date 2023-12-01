@@ -5,7 +5,10 @@ from django.utils import timezone
 from s3_functions import *
 from datetime import datetime
 import re
+<<<<<<< HEAD
 
+=======
+>>>>>>> 014f61b05760d0d6ba640d97e9d3be7f0fd00053
 
 
 # Create your views here.
