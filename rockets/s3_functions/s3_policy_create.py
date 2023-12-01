@@ -29,10 +29,6 @@ bucket_policy = {
     ]
 }
 
-# aws_access_key_id="AKIAY4FU3OUXBF7JOCX3"
-# aws_secret_access_key="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" 
-# region_name="ap-northeast-2"
-
 
 # # Boto3 클라이언트 생성
 # s3_client = boto3.client('s3', aws_access_key_id, aws_secret_access_key, region_name)
