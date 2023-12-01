@@ -1,3 +1,5 @@
+# 수정필요함 -> 확인 안함
+
 # import boto3
 
 # def create_cloudfront_distribution(bucket_name, distribution_name):
