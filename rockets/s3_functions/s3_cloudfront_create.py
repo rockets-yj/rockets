@@ -72,12 +72,12 @@ def create_cloudfront_distribution(bucket_name, distribution_name):
     }
 
     # CloudFront Distribution 생성
-    response = cloudfront_client.create_distribution(
-        DistributionConfig=distribution_config
-    )
+    # response = cloudfront_client.create_distribution(
+    #     DistributionConfig=distribution_config
+    # )
 
     # 생성된 Distribution ID 출력
     print(f"CloudFront Distribution created with ID: {response['Distribution']['Id']}")
 
 # CloudFront Distribution 생성 예제
-create_cloudfront_distribution('rockets-yj', 'cftestsong')
+# create_cloudfront_distribution('rockets-yj', 'cftestsong')
