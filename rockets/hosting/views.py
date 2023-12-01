@@ -5,11 +5,6 @@ from django.utils import timezone
 from s3_functions import *
 from datetime import datetime
 import re
-<<<<<<< HEAD
-
-=======
->>>>>>> 014f61b05760d0d6ba640d97e9d3be7f0fd00053
-
 
 # Create your views here.
 # 호스팅 페이지로 이동
@@ -41,14 +36,10 @@ def userHosting(request):
 
     """
 
-    # 서비스 이름에 넣을 랜덤값 만들기
-    nowTime = datetime.today()
-    randomNow= re.sub(r'[\s\-:./]', '', str(nowTime))
-    print(randomNow)
 
     if request.method == 'POST' :
         # 1-1. POST 타입으로 넘어온 데이터 받기
-        _serviceName = request.POST.get("serviceName") + randomNow
+        _serviceName = request.POST.get("serviceName")
         _regionNo = request.POST.get("regionNo")
         _backendNo = request.POST.get("backendNo")
         _frontendFl = request.POST.get("frontendFl")
@@ -59,6 +50,8 @@ def userHosting(request):
         # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
         userNo = request.session.get('UNO')
         # userNo = 1
+        
+        # 정규식, lower, trim 써서 정규식에 맞는지 한번 더 확인
 
         # 해당하는 regionno에 해당하는 값을 가져옴 (한 행을 다 가져옴)
         userData = Userinfo.objects.get(uno=userNo)
@@ -103,6 +96,11 @@ def userHosting(request):
 
         if new_record_id > 0 :
             result = "호스팅이 성공하였습니다."
+            
+            
+            #TODO: S3 저장되는 함수
+
+
         else :
             result = "호스팅에 실패하였습니다."
 
