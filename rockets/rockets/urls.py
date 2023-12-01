@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('rocketadmin/', include('rocket_admin.urls')),
@@ -25,5 +26,5 @@ urlpatterns = [
     path('', include('signup.urls')),
     path('mypage/', include('hosting.urls')),
     path('mypage/', include('userStatus.urls')),
-    path('ecr/',include('ECR.urls'))
+    path('ecr/',include('ECR.urls')),
 ]
