@@ -83,7 +83,7 @@ if (svcList.length === 0) {
     
         // todo: 서비스 생성 부분 나중에 처리하기
         const td4 = document.createElement('td');
-        td4.innerText = "serviceStatus"; 
+        td4.innerText = ""; 
         td4.className = "service-status";
         td4.style.width = "250px";
 
@@ -104,16 +104,36 @@ if (svcList.length === 0) {
             return response.json();
         })
         .then( data => {
-            const instanceStatus = data.instanceStatus;
+            const instanceStatus = data.instance_status;
             console.log("sts:", instanceStatus);
-            td4.innerText = instanceStatus;
+            // td4.innerText = instanceStatus;
+            let sts =[]
+            let stsText = [];
+            let stsFontColor = [];
+            
+            sts = ["running", "terminated", "stopped", "stopping"];
+            stsText = ["Running", "Terminated", "Stopped", "Stopping"];
+            stsFontColor = ["green", "red", "orange", "orange"];
+
+            // console.log(sts[1]);
+
+            for(let i=0; i<sts.length; i++){
+                if(instanceStatus == sts[i]) {
+                    console.log(stsText[i]);
+                    td4.innerText = stsText[i];
+                    td4.style.color = stsFontColor[i];
+                    td4.style.fontWeight = "bold";
+                } else if(instanceStatus == "underlined"){
+                    td4.innerText = "Terminated";
+                    td4.style.color = "red";
+                    td4.style.fontWeight = "bold";
+                }
+            }
+
         })
         .catch(error => {
             console.error('서비스 상태 요청 중 오류 발생:', error.message);
         });
-
-
-
 
 
     
