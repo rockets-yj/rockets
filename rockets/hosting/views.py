@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rocket_admin.models import *
 from django.utils import timezone
-
+from s3_functions import *
+from datetime import datetime
+import re
 
 # Create your views here.
 # 호스팅 페이지로 이동
@@ -43,10 +45,13 @@ def userHosting(request):
         _frontendFl = request.POST.get("frontendFl")
         _dbNo = request.POST.get("dbNo")
         
+        print(_serviceName)
         # 1-2. 세션에 올린 userNo 가져오기
         # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
         userNo = request.session.get('UNO')
         # userNo = 1
+        
+        # 정규식, lower, trim 써서 정규식에 맞는지 한번 더 확인
 
         # 해당하는 regionno에 해당하는 값을 가져옴 (한 행을 다 가져옴)
         userData = Userinfo.objects.get(uno=userNo)
@@ -56,7 +61,15 @@ def userHosting(request):
 
 
         # 그 중 원하는 값을 사용할 때
+        # now_naive = datetime.now()
+        # now_aware = timezone.make_aware(now_naive, timezone=timezone.get_current_timezone())
+        # timezone.activate(timezone.get_current_timezone())
+        # now_localized = timezone.localtime(now_aware)
+        
         # regionData.region_name
+        # now = timezone.now()
+        # korea_time = timezone.localtime(now, timezone=timezone.get_current_timezone())
+        # print(korea_time)
 
         # 2.ServiceAws 테이블에 넣기
         service_aws_instance = Serviceaws(
@@ -70,9 +83,9 @@ def userHosting(request):
             load_balancer_name = None,
             s3_arn = None,
             cloudfront_dns = None,
+            # create_date=now_localized 
             create_date=timezone.now()
         )
-        print("이제 됨")
         # print(timezone.now())
         # print(service_aws_instance.create_date)
         
@@ -83,6 +96,11 @@ def userHosting(request):
 
         if new_record_id > 0 :
             result = "호스팅이 성공하였습니다."
+            
+            
+            #TODO: S3 저장되는 함수
+
+
         else :
             result = "호스팅에 실패하였습니다."
 

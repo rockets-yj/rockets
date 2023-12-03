@@ -31,5 +31,5 @@ def userSign(request) :
     
     # 중복된 정보가 없으면 회원가입 후 DB 추가, login.html 페이지로 이동
     else : 
-        query = Userinfo.objects.create(uid=_LOGIN_ID, uname=_NAME, upwd=_shaPASSWORD, email=_EMAIL, regist_date=_REGIST_DATE)
+        query = Userinfo.objects.create(uid=_LOGIN_ID, uname=_NAME, upwd=_shaPASSWORD, email=_EMAIL, regist_date=_REGIST_DATE, auth_id=1)
         return render(request, 'login/login.html')

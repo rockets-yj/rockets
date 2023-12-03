@@ -1,11 +1,29 @@
+
+// 해당 회원의 서비스 목록 조회하기
+const title = document.getElementById('title');
+
+const nameDiv= document.createElement('div');
+nameDiv.style.fontWeight = "bold";
+nameDiv.style.fontSize = "20px";
+nameDiv.style.marginTop = "20px";
+if(svcList[1] && svcList[1].user_id !== undefined) {
+    nameDiv.innerText = "사용자 : " + svcList[1].user_id;
+    title.appendChild(nameDiv);
+} else {
+    nameDiv.innerText = "";
+}
+
+
+
 // optimize: 서비스 조회 기능
+const tbody = document.getElementById('serviceTbody');
 
 /**
- * 서비스 조회 함수
+ * 해당 회원의 서비스 목록 조회
 */
-const tbody = document.getElementById('serviceTbody');
+
 // 만약 svcList가 비어있다면 메시지를 화면에 추가
-if (svcList.length === 0) {
+if (svcList.length == 0) {
     const tr_blank = document.createElement('tr');
     const td_blank = document.createElement('td');
     td_blank.colSpan = 5;  // 테이블 열 전체를 차지하도록 설정
@@ -17,6 +35,8 @@ if (svcList.length === 0) {
 
 } else {
     for(let i=0; i<svcList.length; i++){
+
+        console.log(svcList[i].user_id);
     
         const tr = document.createElement('tr');
         tr.className = "tr-row";
@@ -31,16 +51,18 @@ if (svcList.length === 0) {
         serviceId.type = "hidden";
         serviceId.className = "serviceListId-row";
         serviceId.value = svcList[i].service_no;
+        console.log(svcList[i])
     
     
     
         // optimize: 서비스 상태 상세 조회 (클릭할때)
+        // todo: 서비스 하나 선택 시, 다른 페이지로 이동하면서 내용 나오게 
         tr.addEventListener('click', () => {
     
             const serviceListId = document.getElementsByClassName('serviceListId-row');
-            // console.log(serviceListId[i].value);
+            console.log(serviceListId[i].value);
     
-            fetch('/mypage/status/serviceInfo/', {
+            fetch('/rocketadmin/user/service/info', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,15 +77,13 @@ if (svcList.length === 0) {
                 return response.json();
             })
             .then( data => {
-                const serviceinfo = data.serviceInfo[0];
-                const serviceStatus = data.serviceInfo[1];
-                // console.log("serviceinfo:", serviceinfo);
-                // console.log("serviceStatus:", serviceStatus);
-                serviceInfo(serviceinfo, serviceStatus);
-                // serviceInfo 데이터를 여기에서 처리하세요
+                console.log(data)
+                const serviceinfo = JSON.parse(data.serviceInfo);
+                serviceInfo(serviceinfo);
+
             })
             .catch(error => {
-                console.error('serviceInfo 요청 중 오류 발생:', error.message);
+                console.error('serviceInfo 요청 중 오류 발생:', error);
             });
         });
     
@@ -73,84 +93,38 @@ if (svcList.length === 0) {
         td1.style.width = "100px";
     
         const td2 = document.createElement('td');
-        td2.style.width = "250px";
-        td2.innerText = svcList[i].create_date
+        td2.innerText = svcList[i].service_name  
+        td2.style.width = "500px";
     
-        const td3 = document.createElement('td');
-        var svcName = svcList[i].service_name;
-        td3.innerText = svcName; 
+        // const td3 = document.createElement('td');
+        // td3.innerText = svcList[i].user_name; 
     
     
-        // todo: 서비스 생성 부분 나중에 처리하기
         const td4 = document.createElement('td');
-        td4.innerText = ""; 
-        td4.className = "service-status";
-        td4.style.width = "250px";
-
-        //fixme:
-        const svcStatus= document.getElementsByClassName('service-status');
-        // console.log(serviceListId[i].value);
-
-        fetch('/mypage/status/serviceInfo/sts', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('네트워크 응답이 올바르지 않습니다.');
-            }
-            return response.json();
-        })
-        .then( data => {
-            const instanceStatus = data.instance_status;
-            console.log("sts:", instanceStatus);
-            // td4.innerText = instanceStatus;
-            let sts =[]
-            let stsText = [];
-            let stsFontColor = [];
-            
-            sts = ["running", "terminated", "stopped", "stopping"];
-            stsText = ["Running", "Terminated", "Stopped", "Stopping"];
-            stsFontColor = ["green", "red", "orange", "orange"];
-
-            // console.log(sts[1]);
-
-            for(let i=0; i<sts.length; i++){
-                if(instanceStatus == sts[i]) {
-                    console.log(stsText[i]);
-                    td4.innerText = stsText[i];
-                    td4.style.color = stsFontColor[i];
-                    td4.style.fontWeight = "bold";
-                } else if(instanceStatus == "underlined"){
-                    td4.innerText = "Terminated";
-                    td4.style.color = "red";
-                    td4.style.fontWeight = "bold";
-                }
-            }
-
-        })
-        .catch(error => {
-            console.error('서비스 상태 요청 중 오류 발생:', error.message);
-        });
-
-
+        td4.innerText = svcList[i].create_date;
+        td4.style.width = "300px";
     
         const td5 = document.createElement('td');
-        td5.style.width = "250px";
+        td5.style.width = "150px";
+        // todo: service 상태 나중에 수정하기
+        td5.innerText = "serviceStatus";
+
+        const td6 = document.createElement('td');
+        td6.style.width = "150px";
         const delbtn = document.createElement('button');
         delbtn.type = "button";
         delbtn.className = "btn btn-outline-danger delete-btn";
         delbtn.innerText = "삭제";
-        td5.append(delbtn);
+        td6.append(delbtn);
         
     
-        tr.append(td1, td2, td3, td4, td5, serviceId);
+        tr.append(td1, td2, td4, td5, td6, serviceId);
         tbody.append(tr);
     
     }
 }
+
+
 
 
 const infoTbody = document.getElementById('infoTbody');
@@ -158,10 +132,9 @@ const infoTbody = document.getElementById('infoTbody');
 
 /** 
  * 서비스 상세 정보 출력 함수
- * @param {serviceInfo} 서비스 상세 정보
- * @param {serviceStatus} 서비스 상태 정보
+ * @param {serviceInfo} fetch로 불러온 서비스 상세 정보
 */
-const serviceInfo = (serviceInfo, serviceStatus) => {
+const serviceInfo = (serviceInfo) => {
 
     document.getElementById("infoTbody").innerText = "";
 
@@ -174,9 +147,7 @@ const serviceInfo = (serviceInfo, serviceStatus) => {
     td11.classList.add("serviceInfoThead");
     
     const td12 = document.createElement('td');
-    var serviceName = serviceInfo.service_name;
-    
-    td12.innerText = serviceName;
+    td12.innerText = serviceInfo.service_name;
 
     tr1.append(td11, td12);
 
@@ -190,49 +161,7 @@ const serviceInfo = (serviceInfo, serviceStatus) => {
     td21.classList.add("serviceInfoThead");
 
     const td22 = document.createElement('td');
-    
-    let sts =[]
-    let stsText = [];
-    let stsFontColor = [];
-
-    sts = ["running", "terminated", "stopped", "stopping"];
-    stsText = ["Running", "Terminated", "Stopped", "Stopping"];
-    stsFontColor = ["green", "red", "orange", "orange"];
-
-    // console.log(sts[1]);
-
-    for(let i=0; i<sts.length; i++){
-        if(serviceStatus.toLowerCase() == sts[i]) {
-            td22.innerText = stsText[i];
-            td22.style.color = stsFontColor[i];
-            td22.style.fontWeight = "bold";
-        } else {
-            td22.innerText = "Terminated";
-            td22.style.color = "red";
-            td22.style.fontWeight = "bold";
-        }
-    }
-
-
-    // if(serviceStatus.toLowerCase()  == "running") {
-    //     td22.innerText = "Running";
-    //     td22.style.color = "green";
-    //     td22.style.fontWeight = "bold";
-    // } else if (serviceStatus.toLowerCase()  == "terminated") {
-    //     td22.innerText = "Terminated";
-    //     td22.style.color = "red";
-    //     td22.style.fontWeight = "bold";
-    // } else if (serviceStatus.toLowerCase()  == "stopped") {
-    //     td22.innerText = "Stopped";
-    //     td22.style.color = "orange";
-    //     td22.style.fontWeight = "bold";
-    // } else if (serviceStatus.toLowerCase()  == "stopping"){
-    //     td22.innerText = "Stopping";
-    //     td22.style.color = "orange";
-    //     td22.style.fontWeight = "bold";
-    // }
-    
-    // td22.innerText = serviceStatus;  //fixme: 상태 정보 추후 수정하기
+    td22.innerText = "Running";  //fixme: 상태 정보 추후 수정하기
 
     tr2.append(td21, td22);
 
@@ -246,35 +175,7 @@ const serviceInfo = (serviceInfo, serviceStatus) => {
     td31.classList.add("serviceInfoThead");
 
     const td32 = document.createElement('td');
-    let serviceTime = serviceInfo.create_date;
-        
-    // +00:00 제거
-    let formattedTime = serviceTime.replace(/\+00:00$/, '');
-
-    // Date 객체로 변환
-    let dateObject = new Date(formattedTime);
-
-    // 7시간 추가
-    dateObject.setHours(dateObject.getHours() + 9);
-
-    // 결과 출력
-    // 날짜 포맷 지정
-    var options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        hour12: false,
-        minute: '2-digit',
-        second: '2-digit',
-        // timeZoneName: 'short',
-        timeZone: 'Asia/Seoul' // 또는 'KST'로 대체 가능
-    };
-
-    var formattedDate = new Intl.DateTimeFormat('ko-KR', options).format(dateObject);
-
-    td32.innerText = formattedDate;
-    // td32.innerText = serviceInfo.today;
+    td32.innerText = serviceInfo.today;
 
     tr3.append(td31, td32);
 

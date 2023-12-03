@@ -128,6 +128,10 @@
     <!-- CDN 사용 예시 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> {% endcomment %}
+  
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
   </head>
   
   <body>
@@ -243,7 +247,7 @@
               </h6>
               <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="{% url 'userStatusPage' %}">
+                <a class="nav-link d-flex align-items-center gap-2 active" id="toService" aria-current="page" href="{% url 'userStatusPage' %}">
                   <!-- <svg class="bi"><use xlink:href="#house-fill"/></svg> -->
                   <b>Service</b>
                 </a>
@@ -299,6 +303,7 @@
         <br>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3">
           <h1 class="h2" style="margin-bottom: 20px;">Service Info.</h1>
+          {{ context.instance_status }}
           <table class="table table-mypage small">
             <tbody id="infoTbody">
               <!--fixme: Service 테이블 클릭할 때 작성 / js?-->
@@ -369,29 +374,26 @@
   {% comment %} <script src="dashboard.js"></script></body> {% endcomment %}
 
   <script>
-    var srvList = [
-      {% for srv in serviceList %}
-        {
-          "service_no": "{{ srv.service_no }}",
-          "user_no" : "{{ srv.uno }}",
-          "region_no" : "{{ srv.region_no }}",
-          "region_name" : "{{ srv.region_name }}",
-          "db_no" : "{{ srv.db_no }}",
-          "db_name" : "{{ srv.db_name }}",
-          "frontend_fl" : "{{ srv.frontend_fl }}",
-          "backend_name" : "{{ srv.backend_name }}",
-          "create_date" : "{{ srv.create_date }}",
-          "service_name": "{{ srv.service_name }}",
-          "ecr_uri" : "{{ srv.ecr_uri }}",
-          "load_balancer_name": "{{ srv.load_balancer_name }}",
-          "s3_arn" : "{{ srv.s3_arn }}",
-          "cloudfront_dns" : "{{ srv.cloudfront_dns }}",
-        },
-      {% endfor %}
-    ]
-    
-    {% comment %} console.log(srvList[0].service_no); {% endcomment %}
-
+    var svcList = [
+    {% for svc in serviceList %}
+      {
+        "service_no": "{{ svc.service_no }}",
+        "user_no" : "{{ svc.uno }}",
+        "region_no" : "{{ svc.region_no }}",
+        "region_name" : "{{ svc.region_name }}",
+        "db_no" : "{{ svc.db_no }}",
+        "db_name" : "{{ svc.db_name }}",
+        "frontend_fl" : "{{ svc.frontend_fl }}",
+        "backend_name" : "{{ svc.backend_name }}",
+        "create_date" : "{{ svc.create_date }}",
+        "service_name": "{{ svc.service_name }}",
+        "ecr_uri" : "{{ svc.ecr_uri }}",
+        "load_balancer_name": "{{ svc.load_balancer_name }}",
+        "s3_arn" : "{{ svc.s3_arn }}",
+        "cloudfront_dns" : "{{ svc.cloudfront_dns }}",
+      },
+    {% endfor %}
+  ]
 
   </script>
     
