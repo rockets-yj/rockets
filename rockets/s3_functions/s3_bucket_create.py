@@ -19,7 +19,7 @@ region_name = session.region_name
 # 버킷 이름 및 정책 설정
 # 버켓 네임 지정 -> 추후 DB 서비스명 + MAIN_DAMAIN으로 변경하기
 MAIN_DOMAIN = ".rockets-yj.com"
-bucket_name = 'testpythoncoderockets7' + MAIN_DOMAIN
+bucket_name = 'testpythoncoderockets' + MAIN_DOMAIN
 bucket_policy = {
     "Version": "2012-10-17",
     "Statement": [
@@ -63,4 +63,4 @@ s3_client.put_bucket_website(
 )
 
 # 정적 웹 사이트 호스팅 앤드포인트 출력
-print(f's3_website_endpoint: http://{bucket_name}.s3-ewbsite.{region_name}.amazonaws.com')
+print(f's3_website_endpoint: http://{bucket_name}.s3-website.{region_name}.amazonaws.com')
