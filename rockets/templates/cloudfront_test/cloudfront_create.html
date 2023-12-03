@@ -1,0 +1,26 @@
+<html>
+    <h1>Create CloudFront</h1>
+    
+    <button type="button" id="createBtn"> Create</button>
+</html>
+
+<script>
+    var createBtn = document.getElementById("createBtn");
+
+    createBtn.addEventListener("click", () => {
+        console.log("뭐야?")
+        fetch('/cloudfront/testCreate/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("CloudFront 생성 완료");
+                // 여기에서 필요한 업데이트 또는 처리를 수행할 수 있습니다.
+            })
+            .catch(error => console.error('Error:', error));
+});
+
+</script>
