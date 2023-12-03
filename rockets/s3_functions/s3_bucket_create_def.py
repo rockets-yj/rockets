@@ -61,7 +61,7 @@ def create_s3_bucket(hosting_name):
     # 정적 웹 사이트 호스팅 앤드포인트 출력
     print(f's3_website_endpoint: http://{bucket_name}.s3-website.{region_name}.amazonaws.com')
 # 함수 호출 ()안에 hosting시 등록한 서비스 네임 DB와 연결하기 
-create_s3_bucket('youngtesttest12345')
+# create_s3_bucket('youngtesttest12345')
 
 
 
@@ -70,6 +70,6 @@ def printEndpoint() :
     # todo: hosting name 바꾸기
     # hosting_name = "lej_test123455"
     # create_s3_bucket(hosting_name)
-    ept = "http://youngtesttest12345.rockets-yj.com.s3-website.ap-northeast-2.amazonaws.com"
+    ept = "youngtesttest12345.rockets-yj.com.s3-website.ap-northeast-2.amazonaws.com"
     return ept
 

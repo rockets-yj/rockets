@@ -4,31 +4,34 @@ import boto3
 from s3_bucket_create_def import printEndpoint
 
 
-def getServiceName(request):
-    userNo = request.session.get('UNO');
+# def getServiceName(request):
+#     userNo = request.session.get('UNO');
     
-    serviceName = (
-        Serviceaws.objects.filter(userNo=userNo).values('serviceName').first()
-    )
+#     serviceName = (
+#         Serviceaws.objects.filter(userNo=userNo).values('serviceName').first()
+#     )
     
-    return serviceName
+#     return serviceName
 
 
 
 def create_cloudfront_distribution():
     # 변수 설정
     #optimize: 옵션으로 가져오기!
-    origin_domain_name = printEndpoint() # todo: 원본 도메인 주소 가져오기 = s3 엔드포인트 (from s3_bucket_create.py)
-    cname="test1234.rockets-yj.com" #fixme: serviceName + "rockets-yj.com"
+    origin_domain_name = printEndpoint() # todo: 원본 도메인 주소 가져오기 = s3 엔드포인트 (from s3_bucket_create.py)\
+    print(origin_domain_name)
+    
+    cname="yountest1234.rockets-yj.com" #fixme: serviceName + "rockets-yj.com"
     viewer_protocol_policy='redirect-to-https'
     firewall_settings=False
-    ssl_certificate_arn="arn:aws:acm:us-east-1:610264642862:certificate/cc1ae3cf-b92d-4f70-a5bf-c1135ef28ac8" # todo: 윤지가 만든 ssl 인증서 가져오기
+    ssl_certificate_arn="arn:aws:acm:us-east-1:610264642862:certificate/258da75d-d601-4d6c-85a5-ff9395e59ad2" # todo: 윤지가 만든 ssl 인증서 가져오기
     default_root_object='index.html'
     distribution_settings=None
     bucket_name="youngtesttest12345"
     
     
-    print(origin_domain_name)
+    #fixme
+    serviceName = "test1234"
     
     # AWS CloudFront 클라이언트 생성
     client = boto3.client('cloudfront')
@@ -41,24 +44,24 @@ def create_cloudfront_distribution():
             'Quantity': 1, # 원본의 수
             'Items': [ # 원본에 대한 세부 정보
                 {
-                    'DomainName': origin_domain_name, # 도메인 이름
-                    'Id': 'MyOrigin', # 원본을 식별하는 고유 ID, 해당 원본을 참조
-                    'CustomOriginConfig': { # 사용자 지정 설정
-                        'HTTPPort': 80,
-                        'HTTPSPort': 443,
-                        'OriginProtocolPolicy': 'https-only', # 원본과의 통신 시 사용할 프로토콜 정책
-                    }
+                    'DomainName': 'youngtesttest12345.', # 도메인 이름
+                    'Id': serviceName, # 원본을 식별하는 고유 ID, 해당 원본을 참조
+                    # 'CustomOriginConfig': { # 사용자 지정 설정
+                    #     'HTTPPort': 80,
+                    #     'HTTPSPort': 443,
+                    #     'OriginProtocolPolicy': 'https-only', # 원본과의 통신 시 사용할 프로토콜 정책
+                    # }
                 },
             ],
         },
         'DefaultCacheBehavior': {
-            'TargetOriginId': 'CustomOrigin', # 해당 캐시 동작이 적용되는 원본 ID
-            'ForwardedValues': { # CloudFront가 요청을 원본에 전달할 때 어떤 값들을 전달할지 설정
-                'QueryString': False, # 쿼리문자열 포함 여부 (False : 설정x)
-                'Cookies': {
-                    'Forward': 'none', # 쿠키값 (none: 전달 안함)
-                },
-            },
+            'TargetOriginId': serviceName, # 해당 캐시 동작이 적용되는 원본 ID / '' -> 자동할당
+            # 'ForwardedValues': { # CloudFront가 요청을 원본에 전달할 때 어떤 값들을 전달할지 설정
+            #     'QueryString': False, # 쿼리문자열 포함 여부 (False : 설정x)
+            #     'Cookies': {
+            #         'Forward': 'none', # 쿠키값 (none: 전달 안함)
+            #     },
+            # },
             'ViewerProtocolPolicy': viewer_protocol_policy,  # 뷰어와 CloudFront 사이의 통신에 사용할 프로토콜
             'MinTTL': 0, # 최소 TTL(Time-to-Live). 캐시에서 가져온 리소스를 얼마동안 유지할지 결정 (0 : 항상 새로운 리소스를 가져와 원본 서버에 갱신)
         },
