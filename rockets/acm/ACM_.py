@@ -31,16 +31,17 @@ def request_certificate(service_name):
 def create_dns_record(service_name):
     # ACM 인증서 정보 가져오기
     acm_certificate_arn = request_certificate(service_name)
-    time.sleep(3)
+    time.sleep(5)
     acm_client = boto3.client('acm', region_name='us-east-1')  # 'your_region'을 사용하는 AWS 리전으로 변경
     acm_certificate = acm_client.describe_certificate(CertificateArn=acm_certificate_arn)
 
     # Route 53 클라이언트 생성
-    route53_client = boto3.client('route53')  # AWS 리전을 지정하지 않습니다.
+    route53_client = boto3.client('route53')  
 
     # DNS 레코드 생성을 위한 정보 추출
     domain_name = acm_certificate['Certificate']['DomainName']
     validation_options = acm_certificate['Certificate']['DomainValidationOptions']
+
     
     for validation_option in validation_options:
         record_name = validation_option['ResourceRecord']['Name']
@@ -83,5 +84,5 @@ def create_dns_record(service_name):
 
 
 if __name__ == "__main__":
-    service_name = "acmtest1"
+    service_name = "acmtest3"
     create_dns_record(service_name)
