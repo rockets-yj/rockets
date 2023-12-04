@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-mrm(2d!vr5hdf@o@_i++y(2dxm$jq08y1h3gyo63)%i3@u=9&0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -151,11 +151,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 # static 위치주소
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# STATIC_URL = 'static/'
+# STATIC_ROOT = BASE_DIR / 'static'
 
-STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
+
+
+
+# STATIC_URL = '/static/'
+# STATIC_DIR = os.path.join(BASE_DIR,'static')
+# STATICFILES_DIRS = [
+#     STATIC_DIR,
+#     ]
+
+# STATIC_ROOT = os.path.join(ROOT_DIR,'.static_root')
+# print(STATIC_ROOT)
+
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
+print(STATIC_ROOT)
+
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
