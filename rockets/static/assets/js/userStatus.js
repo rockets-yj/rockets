@@ -3,6 +3,9 @@
 /**
  * 서비스 조회 함수
 */
+
+console.log("js파일시작");
+
 const tbody = document.getElementById('serviceTbody');
 // 만약 svcList가 비어있다면 메시지를 화면에 추가
 if (svcList.length === 0) {

@@ -44,13 +44,14 @@ class Serviceaws(models.Model):
     region_no = models.ForeignKey(Region, models.DO_NOTHING, db_column='REGION_NO') 
     db_no = models.ForeignKey(DbList, models.DO_NOTHING, db_column='DB_NO') 
     backend_no = models.ForeignKey(BackendLanguage, models.DO_NOTHING, db_column='BACKEND_NO')  
-    service_name = models.CharField(db_column='SERVICE_NAME', max_length=255, blank=True, null=True)  
+    service_name = models.CharField(db_column='SERVICE_NAME', max_length=255, blank=True, null=False)  
     ecr_uri = models.CharField(db_column='ECR_URI', max_length=255, blank=True, null=True) 
     load_balancer_name = models.CharField(db_column='LOAD_BALANCER_NAME', max_length=255, blank=True, null=True)  
     s3_arn = models.CharField(db_column='S3_ARN', max_length=255, blank=True, null=True)  
     cloudfront_dns = models.CharField(db_column='CLOUDFRONT_DNS', max_length=255, blank=True, null=True)  
     frontend_fl = models.CharField(db_column='FRONTEND_FL', max_length=4,blank=True, null=True)
     create_date = models.DateTimeField(db_column='CREATE_DATE', auto_now_add=True) 
+    port = models.IntegerField(db_column='PORT', blank=True, null=False, default=80) 
     
     def json(self):
         return {
@@ -66,6 +67,7 @@ class Serviceaws(models.Model):
             "cloudfront_dns": self.cloudfront_dns,
             "frontend_fl": self.frontend_fl,
             "create_date": self.create_date,
+            "port": self.port,
         }
     
     class Meta:

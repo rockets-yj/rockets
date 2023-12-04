@@ -5,11 +5,24 @@ from django.utils import timezone
 from s3_functions import *
 from datetime import datetime
 import re
+from django.http import HttpResponse
 
 # Create your views here.
 # 호스팅 페이지로 이동
 def userhostingPage(request):
     return render(request, 'hosting/hostingPage.html')
+
+
+# # 서비스이름 가져오기
+# def getServiceName(request):
+#     userNo = request.session.get('UNO');
+    
+#     serviceName = (
+#         Serviceaws.objects.filter(userNo=userNo).values('serviceName').first()
+#     )
+    
+#     return serviceName
+
 
 
 # 호스팅 정보 삽입
@@ -44,8 +57,10 @@ def userHosting(request):
         _backendNo = request.POST.get("backendNo")
         _frontendFl = request.POST.get("frontendFl")
         _dbNo = request.POST.get("dbNo")
+        _port = request.POST.get("portNumber")
+        _projectFile = request.FILES.get("projectFile")
         
-        print(_serviceName)
+        print("_serviceName:", _serviceName)
         # 1-2. 세션에 올린 userNo 가져오기
         # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
         userNo = request.session.get('UNO')
@@ -79,12 +94,13 @@ def userHosting(request):
             backend_no = backendData,
             service_name = _serviceName,
             frontend_fl = _frontendFl,
-            ecr_uri = None, # 또는 빈 문자열'' 할당 -> Null
-            load_balancer_name = None,
-            s3_arn = None,
-            cloudfront_dns = None,
+            ecr_uri = None, # 또는 빈 문자열'' 할당 -> Null 
+            load_balancer_name = None, 
+            s3_arn = None, 
+            cloudfront_dns = None, 
             # create_date=now_localized 
-            create_date=timezone.now()
+            create_date=timezone.now(),
+            port=_port,
         )
         # print(timezone.now())
         # print(service_aws_instance.create_date)
@@ -92,16 +108,45 @@ def userHosting(request):
         service_aws_instance.save()
 
         new_record_id = service_aws_instance.service_no
+        print("new_record_id: ", new_record_id)
+        
         result = ""
 
-        if new_record_id > 0 :
-            result = "호스팅이 성공하였습니다."
-            
-            
-            #TODO: S3 저장되는 함수
+        # DB에 정보 저장에 성공한다면, 
+        if new_record_id != 0:  
+            # 서비스 이름 가져오기
+            print("userNo: ", userNo)
+            print("serviceName: ", _serviceName)
 
+            try:
+                # S3 생성 함수 갖고 오기
+                s3Result = s3_bucket_create_def.create_s3_bucket(_serviceName)
+                print("버킷 생성 성공 s3Result: ", s3Result)
+                
+            except Exception as e:
+                print(f's3 생성 중 에러 발생: {e}')
 
+            # 성공하면 1 return
+            if s3Result == 1 :
+                # S3에 파일을 업로드하는 함수 갖고오기
+                bucket_name = _serviceName
+                s3_file_path = _serviceName
+            
+                s3_file_url = s3_fileupload_def.upload_to_s3(_projectFile, bucket_name, s3_file_path)
+                print("_projectFile: ", _projectFile)
+                print("s3_file_url: ", s3_file_url)
+                # s3_file_url = f'https://{bucket_name}.s3.{aws_region}.amazonaws.com/{s3_file_path}'
+            
+                
+                # 성공하면
+                if s3_file_url :
+                    #todo: s3주소 저장하기
+                    result = "호스팅이 성공하였습니다."
+                
+                else :
+                    result = "파일 업로드 실패"
+                    
         else :
             result = "호스팅에 실패하였습니다."
 
-        return render(request, 'hosting/hostingResult.html', {'result' : result})
+    return render(request, 'hosting/hostingResult.html', {'result' : result})
