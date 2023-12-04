@@ -27,6 +27,11 @@ def chart(service_name, email):
     chart = f"apiVersion: v2\nname: {service_name}\ndescription: {service_name}\n\nkeywords:\n  - rocketdan\n  - rockets\n\nmaintainer:\n  - name: {service_name}\n    email: {email}\nengine: gotpl\n\ntype: application\nversion: 0.1.0"
     return chart
 
+def nodegroup(service_name):
+
+    ng = f"apiVersion: eksctl.io/v1alpha5\nkind: ClusterConfig\n\nmetadata:\n  name: rockets-eks\n  region: ap-northeast-2\n\nmanagedNodeGroups:\n  - name: {service_name}\n    labels:\n      nodegroup: {service_name}\n    instanceType: t3.medium\n    desiredCapacity: 1\n    volumesize: 20"
+    return ng
+
 def create_and_write_file(file_path, content):
     with open(file_path, 'w') as file:
         file.write(content)
@@ -43,11 +48,14 @@ if __name__ == "__main__":
 
     values_yaml = os.path.join(target_folder, "values.yaml")
     chart_yaml = os.path.join(target_folder, "Chart.yaml")
+    nodegroup_yaml = os.path.join(target_folder, "nodegorup.yaml")
     service_name = "test"
     image = "image"
     port = 80
     email = "aaa@aaa.aaa"
     values_content = values(service_name, port, image)
     chart_content = chart(service_name, email)
+    nodegroup_content = nodegroup(service_name)
     create_and_write_file(values_yaml, values_content)
     create_and_write_file(chart_yaml, chart_content)
+    create_and_write_file(nodegroup_yaml, nodegroup_content)
