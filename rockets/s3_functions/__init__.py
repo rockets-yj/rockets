@@ -7,5 +7,6 @@ __all__ = [
     's3_cloudfront_create_ky',
     's3_fileupload',
     'cf_create',
-    's3_bucket_create_def'
+    's3_bucket_create_def',
+    's3_fileupload_def'
 ]
