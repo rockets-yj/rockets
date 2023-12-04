@@ -27,10 +27,6 @@ urlpatterns = [
     path('mypage/', include('hosting.urls')),
     path('mypage/', include('userStatus.urls')),
     path('ecr/',include('ECR.urls')),
-<<<<<<< HEAD
     path('rocketadmin/', include('ECR.urls')),
-    
-=======
     path('cloudfront/',include('hosting.urls')),  #cloudfrontTest 추후 삭제 예정
->>>>>>> f9cd9bf46905ae38b3bcecbe0f30f86a5a5a6a23
 ]

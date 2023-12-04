@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 import boto3
 # from rocket_admin.models import Serviceaws
-from s3_bucket_create_def import printEndpoint
+from .s3_bucket_create_def import printEndpoint
 
 
 # def getServiceName(request):
