@@ -1,17 +1,16 @@
 from django.shortcuts import render, redirect
 import boto3
-# from rocket_admin.models import Serviceaws
-from s3_bucket_create_def import printEndpoint
+from rocket_admin.models import Serviceaws
+from .s3_bucket_create_def import printEndpoint
 
-
-# def getServiceName(request):
-#     userNo = request.session.get('UNO');
+def getServiceName(request):
+    userNo = request.session.get('UNO');
     
-#     serviceName = (
-#         Serviceaws.objects.filter(userNo=userNo).values('serviceName').first()
-#     )
+    serviceName = (
+        Serviceaws.objects.filter(userNo=userNo).values('serviceName').first()
+    )
     
-#     return serviceName
+    return serviceName
 
 
 
@@ -24,10 +23,17 @@ def create_cloudfront_distribution():
     cname="yountest1234.rockets-yj.com" #fixme: serviceName + "rockets-yj.com"
     viewer_protocol_policy='redirect-to-https'
     firewall_settings=False
-    ssl_certificate_arn="arn:aws:acm:us-east-1:610264642862:certificate/258da75d-d601-4d6c-85a5-ff9395e59ad2" # todo: 윤지가 만든 ssl 인증서 가져오기
+    ssl_certificate_arn="arn:aws:acm:us-east-1:610264642862:certificate/98015bf7-2384-4ccd-9597-0b65d6a92873" # todo: 윤지가 만든 ssl 인증서 가져오기
     default_root_object='index.html'
     distribution_settings=None
     bucket_name="youngtesttest12345"
+    
+    '''
+    # todo: 
+    # 1) 인증서 넣기  
+    # 2) 로드밸런서 넣기  
+    # 3) s3 엔드포인트 넣기
+    '''
     
     
     #fixme
@@ -44,32 +50,32 @@ def create_cloudfront_distribution():
             'Quantity': 1, # 원본의 수
             'Items': [ # 원본에 대한 세부 정보
                 {
-                    'DomainName': 'youngtesttest12345.', # 도메인 이름
+                    'DomainName': serviceName + "cloudfront.net", # 도메인 이름 ex) d29d9qeen6l0km.cloudfront.net 이런식으로 생성됨
                     'Id': serviceName, # 원본을 식별하는 고유 ID, 해당 원본을 참조
-                    # 'CustomOriginConfig': { # 사용자 지정 설정
-                    #     'HTTPPort': 80,
-                    #     'HTTPSPort': 443,
-                    #     'OriginProtocolPolicy': 'https-only', # 원본과의 통신 시 사용할 프로토콜 정책
-                    # }
+                    'CustomOriginConfig': { # 사용자 지정 설정
+                        'HTTPPort': 80,
+                        'HTTPSPort': 443,
+                        'OriginProtocolPolicy': 'http-only', # 원본과의 통신 시 사용할 프로토콜 정책
+                    }
                 },
             ],
         },
         'DefaultCacheBehavior': {
             'TargetOriginId': serviceName, # 해당 캐시 동작이 적용되는 원본 ID / '' -> 자동할당
-            # 'ForwardedValues': { # CloudFront가 요청을 원본에 전달할 때 어떤 값들을 전달할지 설정
-            #     'QueryString': False, # 쿼리문자열 포함 여부 (False : 설정x)
-            #     'Cookies': {
-            #         'Forward': 'none', # 쿠키값 (none: 전달 안함)
-            #     },
-            # },
+            'ForwardedValues': { # CloudFront가 요청을 원본에 전달할 때 어떤 값들을 전달할지 설정
+                'QueryString': True, # 쿼리문자열 포함 여부 (False : 설정x)
+                'Cookies': {
+                    'Forward': 'none', # 쿠키값 (none: 전달 안함)
+                },
+            },
             'ViewerProtocolPolicy': viewer_protocol_policy,  # 뷰어와 CloudFront 사이의 통신에 사용할 프로토콜
             'MinTTL': 0, # 최소 TTL(Time-to-Live). 캐시에서 가져온 리소스를 얼마동안 유지할지 결정 (0 : 항상 새로운 리소스를 가져와 원본 서버에 갱신)
         },
         # 루트 경로('/')로 요청 시 기본으로 제공될 객체
         'DefaultRootObject': default_root_object, # 함수 호출 시 전달되는 인자
         'Aliases': { # CloudFront 배포에 대한 대체 도메인 이름(CNAME)  #todo
-            'Quantity': 1, # 대체 도메인 이름 수
-            'Items': [cname] if cname else [],  # 각 대체 도메인 이름이 포함
+            'Quantity': 2, # 대체 도메인 이름 수
+            'Items': ['youngtesttest12345.rockets-yj.com', 'www.youngtesttest12345.rockets-yj.com'],  # 각 대체 도메인 이름이 포함
         },
         'WebACLId': '',  # 방화벽을 위한 웹 ACL ID} # 방화벽 설정 추가
         'ViewerCertificate': {

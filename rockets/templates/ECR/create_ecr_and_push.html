@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create ECR and Push Image</title>
+</head>
+
+<body>
+    <h1>Create ECR and Push Image</h1>
+    <form action="{% url 'create_ecr_and_push' %}" method="post">
+        {% csrf_token %}
+        <label for="service_name">서비스명:</label>
+        <input type="text" name="service_name" required><br>
+        <label for="region">리전:</label>
+        <input type="text" name="region" required><br>
+        <input type="submit" value="Create ECR and Push Image">
+    </form>
+</body>
+
+</html>

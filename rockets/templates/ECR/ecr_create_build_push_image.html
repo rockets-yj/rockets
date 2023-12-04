@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECR Image Push</title>
+</head>
+
+<body>
+
+    <h1>ECR Image Push</h1>
+
+    <form id="ecrForm">
+        <label for="serviceName">서비스명:</label>
+        <input type="text" id="serviceName" name="serviceName" required>
+
+        <label for="region">리전:</label>
+        <input type="text" id="region" name="region" required>
+
+        <button type="button" onclick="submitForm()">ECR 이미지 푸시</button>
+    </form>
+
+    <script>
+        function submitForm() {
+            var serviceName = document.getElementById('serviceName').value;
+            var region = document.getElementById('region').value;
+
+            // 서버로 HTTP 요청 보내기
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/push-image', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    alert(xhr.responseText);
+                }
+            };
+
+            var data = JSON.stringify({
+                serviceName: serviceName,
+                region: region
+            });
+            xhr.send(data);
+        }
+    </script>
+
+</body>
+
+</html>
