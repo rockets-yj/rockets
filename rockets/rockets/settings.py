@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'signup',
     'userStatus',
     'ECR',
-    'ecr_functions'
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,6 +58,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+
+
+]
+
+
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:6848",  # or the origin you are using for development
+    # Add other origins as needed
 ]
 
 ROOT_URLCONF = 'rockets.urls'

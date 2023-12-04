@@ -27,4 +27,6 @@ urlpatterns = [
     path('mypage/', include('hosting.urls')),
     path('mypage/', include('userStatus.urls')),
     path('ecr/',include('ECR.urls')),
+    path('rocketadmin/', include('ECR.urls')),
+    
 ]

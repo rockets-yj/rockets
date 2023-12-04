@@ -19,7 +19,7 @@ from . import ecr_list_test
 
 
 
-def search_ecr(query):
+def search_ecr_view(query):
     ecr_client = boto3.client('ecr')  # AWS 리전 지정
 
     try:
