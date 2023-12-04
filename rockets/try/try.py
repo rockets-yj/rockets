@@ -1,5 +1,6 @@
 import shutil
 import os
+import subprocess
 
 def create_folder(folder_path):
     try:
@@ -37,6 +38,15 @@ def create_and_write_file(file_path, content):
         file.write(content)
         print(f"파일 생성 및 문장 추가: {file_path}")
 
+def create_eks_nodegroup(path, service_name):
+    command = f"eksctl create nodegroup --config-file=./{path}/nodegroup.yaml --include={service_name}"
+    
+    try:
+        subprocess.run(command, shell=True, check=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Nodegroup 생성 명령어 실행 중 오류 발생: {e}")
+
 if __name__ == "__main__":
     # 폴더 생성
     target_folder = "test2"
@@ -48,8 +58,8 @@ if __name__ == "__main__":
 
     values_yaml = os.path.join(target_folder, "values.yaml")
     chart_yaml = os.path.join(target_folder, "Chart.yaml")
-    nodegroup_yaml = os.path.join(target_folder, "nodegorup.yaml")
-    service_name = "test"
+    nodegroup_yaml = os.path.join(target_folder, "nodegroup.yaml")
+    service_name = "trytest0901"
     image = "image"
     port = 80
     email = "aaa@aaa.aaa"
@@ -59,3 +69,4 @@ if __name__ == "__main__":
     create_and_write_file(values_yaml, values_content)
     create_and_write_file(chart_yaml, chart_content)
     create_and_write_file(nodegroup_yaml, nodegroup_content)
+    create_eks_nodegroup(target_folder, service_name)
