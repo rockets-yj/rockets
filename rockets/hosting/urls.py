@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-
+from . import cloudfrontTest
 
 urlpatterns = [
     path('hosting/', views.userhostingPage, name='userHostingPage'),
-    path('hosting/activate/', views.userHosting, name='hosting')
+    path('hosting/activate/', views.userHosting, name='hosting'),
+    path('testPage/', cloudfrontTest.cloudfrontTestPage, name='cloudfrontTestPage'),
+    path('testCreate/', cloudfrontTest.cloudfrontCreate, name='cloudfrontCreate'),
 ]

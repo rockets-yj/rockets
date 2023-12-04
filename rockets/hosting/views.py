@@ -105,4 +105,3 @@ def userHosting(request):
             result = "호스팅에 실패하였습니다."
 
         return render(request, 'hosting/hostingResult.html', {'result' : result})
-    
