@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}            
+  namespace: {{ .Values.namespace.name }}
+spec:
+  replicas: {{ .Values.deployment.rep }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}                                                            # spec.template.metadata.labels.app
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}                                                           # pod의 이름
+    spec:
+      containers:
+        - name: {{ .Values.container.name }}
+          image: {{ .Values.container.image }} # 이전에 업로드한 이미지 지정
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.container.port }}                                                # container의 리슨 포트
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: nodegroup
+                  operator: In
+                  values:
+                  - {{ .Values.node.name }}
+      
