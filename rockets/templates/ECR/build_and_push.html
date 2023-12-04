@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build and Push</title>
+</head>
+
+<body>
+    <h1>Build and Push Docker Image to ECR</h1>
+    <form method="post" action="{% url 'build_and_push' %}">
+        {% csrf_token %}
+        <input type="text" name="service_name">
+        <button type="submit">Build and Push</button>
+    </form>
+</body>
+
+</html>

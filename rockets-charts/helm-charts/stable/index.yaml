@@ -1,8 +1,21 @@
 apiVersion: v1
 entries:
+  albtest:
+  - apiVersion: v2
+    created: "2023-12-04T02:43:04.310896402Z"
+    description: Sample helm chart for study
+    digest: 9b7b62971c35c351af2a8b5445e21bf15500964a18735e11d1e31cc37c216d04
+    keywords:
+    - hello
+    - sample
+    name: albtest
+    type: application
+    urls:
+    - albtest-0.1.0.tgz
+    version: 0.1.0
   hello-helm:
   - apiVersion: v2
-    created: "2023-11-30T01:00:42.65108055Z"
+    created: "2023-12-04T02:43:04.313354246Z"
     description: Sample helm chart for study
     digest: 10c9febefc622171ac67449e6c5036d8264f6e66fc00db728c85e4450df4a3d1
     keywords:
@@ -26,7 +39,7 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 1.25.3
-    created: "2023-11-30T01:00:42.656905665Z"
+    created: "2023-12-04T02:43:04.319153482Z"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -56,7 +69,7 @@ entries:
     version: 15.4.3
   rocket-helm:
   - apiVersion: v2
-    created: "2023-11-30T01:00:42.657442276Z"
+    created: "2023-12-04T02:43:04.320399818Z"
     description: Sample helm chart for study
     digest: 4407804f028e1c8603aa675312d8d7a77d0ef782877de115c3ed5b7426750ef1
     keywords:
@@ -67,4 +80,4 @@ entries:
     urls:
     - rocket-helm-0.1.0.tgz
     version: 0.1.0
-generated: "2023-11-30T01:00:42.650339817Z"
+generated: "2023-12-04T02:43:04.310006169Z"

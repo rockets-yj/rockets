@@ -6,6 +6,7 @@ from . import views
 #from functions import search_ecr
 from ecr_functions import *
 from .views import *
+from .views import push_to_ecr
 
 
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('delete_ecr/', views.delete_repository, name='delete_ecr'),
     path('search_result/',views.search_result ,name='search_result'),
     path('delete_ecr/<str:repository_name>/', views.delete_ecr, name='delete_ecr'),
+    path('push-to-ecr/', push_to_ecr, name='push_to_ecr'),
+    path('create_ecr_and_push/', views.create_ecr_and_push, name='create_ecr_and_push'),
 
     
 ]

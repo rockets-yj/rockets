@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECR 이미지 푸시</title>
+</head>
+
+<body>
+    <h1>ECR 이미지 푸시</h1>
+    <form id="ecrForm">
+        <label for="serviceName">서비스 이름:</label>
+        <input type="text" id="serviceName" name="serviceName" required><br>
+
+        <label for="region">리전:</label>
+        <input type="text" id="region" name="region" required><br>
+
+        <!-- 추가: 검색어를 입력받는 input 태그 -->
+        <label for="searchKeyword">검색어:</label>
+        <input type="text" id="searchKeyword" name="searchKeyword" required><br>
+
+        <button type="button" onclick="pushToECR()">ECR에 푸시</button>
+    </form>
+
+    <div id="resultMessage"></div>
+
+    <script>
+        function pushToECR() {
+            var serviceName = document.getElementById("serviceName").value;
+            var region = document.getElementById("region").value;
+            var searchKeyword = document.getElementById("searchKeyword").value;
+            var resultMessage = document.getElementById("resultMessage");
+
+            if (!serviceName || !region || !searchKeyword) {
+                resultMessage.innerHTML = "서비스 이름, 리전, 검색어를 모두 입력하세요.";
+                return;
+            }
+
+            // {% url %} 템플릿 태그를 사용하여 Django URL을 동적으로 생성합니다.
+            var url = "{% url 'push_to_ecr' %}?service_name=" + encodeURIComponent(serviceName) +
+                "&region=" + encodeURIComponent(region) +
+                "&search_keyword=" + encodeURIComponent(searchKeyword);
+
+
+            console.log(url);
+
+            // 데이터를 Django views로 보내기 위해 AJAX를 사용할 수 있습니다.
+            // 여기서는 기본적인 fetch를 사용하겠습니다.
+            fetch(url)
+                .then(response => response.json())
+                .then(data => resultMessage.innerHTML = data.message)
+                .catch(error => console.error('에러:', error));
+        }
+    </script>
+</body>
+
+</html>
