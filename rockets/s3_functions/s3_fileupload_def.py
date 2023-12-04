@@ -13,24 +13,26 @@ session = boto3.Session (
 aws_region = os.environ.get('AWS_REGION')
 
 
-def upload_to_s3(file, bucket_name, s3_file_path):
+def upload_to_s3(local_file_path, bucket_name, s3_file_path):
+    
+    # S3 파일 경로: 위 s3 버킷 안에 폴더로 생성함
+    # 아래 rockets라는 폴더를 자동으로 생성하고 안에 파일을 저장함
 
     # Boto3 S3 클라이언트 생성
     s3 = session.client('s3')
 
     try:
         # 로컬 파일을 S3 버킷에 업로드
-        s3.upload_file(file, bucket_name, s3_file_path)
+        s3.upload_file(local_file_path, bucket_name, s3_file_path)
 
         # 업로드된 파일의 S3 주소 생성
         s3_file_url = f'https://{bucket_name}.s3.{aws_region}.amazonaws.com/{s3_file_path}'
 
         return s3_file_url
-    
-    except Exception as e:
-        print(f'업로드 중 에러 발생: {e}')
-        return None
 
+    except NoCredentialsError:
+        print('AWS 계정 정보가 정확한지 확인하세요.')
+        return None
 
 # if __name__ == '__main__':
 #     # 로컬 파일 경로 = hosting에서 받은 파일을 여기로 연결 
@@ -39,9 +41,9 @@ def upload_to_s3(file, bucket_name, s3_file_path):
 #     # S3 버킷 이름 = 서비스이름으로 받아서 저장하기 
 #     bucket_name = 'rockets-yj'
 
-    # S3 파일 경로: 위 s3 버킷 안에 폴더로 생성함
-    # 아래 rockets라는 폴더를 자동으로 생성하고 안에 파일을 저장함
-    s3_file_path = 'rockets/s3_upload_test.txt'
+#     # S3 파일 경로: 위 s3 버킷 안에 폴더로 생성함
+#     # 아래 rockets라는 폴더를 자동으로 생성하고 안에 파일을 저장함
+#     s3_file_path = 'rockets/s3_upload_test.txt'
 
 #     # 파일 업로드 및 S3 주소 가져오기
 #     s3_file_url = upload_to_s3(local_file_path, bucket_name, s3_file_path)

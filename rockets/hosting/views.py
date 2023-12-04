@@ -6,6 +6,7 @@ from s3_functions import *
 from datetime import datetime
 import re
 from django.http import HttpResponse
+import os
 
 # Create your views here.
 # 호스팅 페이지로 이동
@@ -60,6 +61,9 @@ def userHosting(request):
         _port = request.POST.get("portNumber")
         _projectFile = request.FILES.get("projectFile")
         
+        print("_projectFile:", _projectFile)
+        
+        
         print("_serviceName:", _serviceName)
         # 1-2. 세션에 올린 userNo 가져오기
         # fixme: 로그인 기능 완성되면 세션에서 가져오는 걸로 바꾸기
@@ -113,6 +117,7 @@ def userHosting(request):
         result = ""
 
         # DB에 정보 저장에 성공한다면, 
+        # optimize: S3 생성 과정
         if new_record_id != 0:  
             # 서비스 이름 가져오기
             print("userNo: ", userNo)
@@ -131,6 +136,9 @@ def userHosting(request):
                 # S3에 파일을 업로드하는 함수 갖고오기
                 bucket_name = _serviceName
                 s3_file_path = _serviceName
+                # 로컬 파일 경로 = hosting에서 받은 파일을 여기로 연결 
+                local_file_path = os.getcwd()
+                print("local_file_path: ", local_file_path) 
             
                 s3_file_url = s3_fileupload_def.upload_to_s3(_projectFile, bucket_name, s3_file_path)
                 print("_projectFile: ", _projectFile)
