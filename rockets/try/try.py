@@ -192,7 +192,7 @@ def get_load_balancer_dns(service_name):                               # 생성�
 
 if __name__ == "__main__":
 
-    service_name = "trytest12"
+    service_name = "trytest13"
     image = "pengbai/docker-supermario"
     port = 8080
     email = "aaa@aaa.aaa"
