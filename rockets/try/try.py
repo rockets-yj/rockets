@@ -54,7 +54,20 @@ def nodegroup(service_name):                                                    
     ng = f"apiVersion: eksctl.io/v1alpha5\nkind: ClusterConfig\n\nmetadata:\n  name: eks-rockets\n  region: ap-northeast-2\n\nmanagedNodeGroups:\n  - name: {service_name}\n    labels:\n      nodegroup: {service_name}\n    instanceType: t3.medium\n    desiredCapacity: 1\n    volumesize: 20"
     return ng
 
+def get_nodegroup_status(cluster_name, nodegroup_name):                                         # nodegroup 상태 확인
+    try:
+        # AWS CLI를 사용하여 노드 그룹 정보 조회
+        command = f"aws eks describe-nodegroup --cluster-name {cluster_name} --nodegroup-name {nodegroup_name}"
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
 
+        # JSON 형식으로 반환된 결과 파싱
+        response_json = json.loads(result.stdout)
+        status = response_json['nodegroup']['status']
+        return status
+    except subprocess.CalledProcessError as e:
+        print(f"에러: {e}")
+        return None
+    
 
 def create_eks_nodegroup(path, service_name, cluster):                                            # nodegroup 생성 명령어 실행
     command = f"eksctl create nodegroup --config-file=./{path}/nodegroup.yaml --include={service_name}"
@@ -76,6 +89,34 @@ def delete_eks_nodegroup(path, service_name, cluster):                          
 
     except subprocess.CalledProcessError as e:
         print(f"Nodegroup 삭제 명령어 실행 중 오류 발생: {e}")
+
+
+def wait_for_nodegroup_deletion(cluster, service_name):                                        # nodegroup 상태 확인 후 있으면 삭제 후 생성, 없으면 생성
+
+    while True:
+        status = get_nodegroup_status(cluster, service_name)
+
+        if status == "DELETING":
+            print("삭제 중")
+            time.sleep(5)
+
+        elif status == "ACTIVE":
+            print("삭제 시작")
+            delete_eks_nodegroup(cluster, service_name)
+            time.sleep(3)
+        
+        elif status == "CREATING":
+            print("생성 오류")
+            delete_eks_nodegroup(cluster, service_name)
+
+        elif status == None:
+            print("생성 시작")
+            time.sleep(60)
+            create_eks_nodegroup(service_name, service_name)
+            break
+
+        else:
+            delete_eks_nodegroup(cluster, service_name)
 
 
 def delete_namespace(service_name):                                            # nodegroup 생성 명령어 실행
@@ -151,7 +192,7 @@ def get_load_balancer_dns(service_name):                               # 생성�
 
 if __name__ == "__main__":
 
-    service_name = "jjanghunwoo"
+    service_name = "trytest12"
     image = "pengbai/docker-supermario"
     port = 8080
     email = "aaa@aaa.aaa"
