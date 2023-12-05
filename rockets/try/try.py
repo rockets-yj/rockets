@@ -165,7 +165,7 @@ def helm_start(service_name):                                          # helm re
     command = f"helm install {service_name} {service_name}/"
     try:
         subprocess.run(command, shell=True, check=True)
-        #delete_folder(service_name)
+        delete_folder(service_name)
 
     except subprocess.CalledProcessError as e:
         print(f"helm 실행 중 오류 발생: {e}")
@@ -201,5 +201,5 @@ if __name__ == "__main__":
     create_service(service_name, image, port, email)
     create_eks_nodegroup(service_name, service_name, cluster)
     helm_start(service_name)
-    time.sleep(10)
+    time.sleep(10)                                   # 바로 LB 못 불러와서 잠시 후 불러오기 위해서
     print(get_load_balancer_dns(service_name))
