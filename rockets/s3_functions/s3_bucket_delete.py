@@ -49,8 +49,12 @@ def delete_s3_bucket(bucket_name):
         print(f"Error deleting S3 bucket '{bucket_name}': {e}")
 
 
-# 삭제할 bucket name을 여기에 변수로 선언하기 -> DB와 연결필요
-delete_bucket_name = "upload8.rockets-yj.com"
+for i in range(20, 31, 1):
+    delete_s3_bucket(f"1205test{i}.rockets-yj.com")
 
-# 함수 실행하기
-delete_s3_bucket(delete_bucket_name)
+
+# # 삭제할 bucket name을 여기에 변수로 선언하기 -> DB와 연결필요
+# delete_bucket_name = "1205test9.rockets-yj.com"
+
+# # 함수 실행하기
+# delete_s3_bucket(delete_bucket_name)
