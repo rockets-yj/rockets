@@ -253,7 +253,7 @@
               <label for="servicecName" class="form-label"><b>Name</b></label>
               <div class="input-group has-validation">
                 <!-- <span class="input-group-text">@</span> -->
-                <input type="text" class="form-control" name="serviceName" id="serviceName" placeholder="Name" required>
+                <input type="text" class="form-control" name="serviceName" id="serviceName" minlength="8" placeholder="Name" required oninput="validateInput()">
                 <div class="invalid-feedback">
                   Service name is required.
                 </div>
@@ -342,7 +342,11 @@
             </div>
             
           </div>
-
+          <script> <!--추후 삭제 예정, required로 적용할 예정-->
+            {% if error %}
+              alert("{{ error }}");
+            {% endif %}
+          </script>
           <hr class="my-4">
 
           <div class="mb-3">
