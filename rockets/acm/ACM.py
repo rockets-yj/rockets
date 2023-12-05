@@ -102,5 +102,4 @@ if __name__ == "__main__":
     service_name = "acmtest5"
     arn  = request_certificate(service_name)
     create_dns_record(arn)
-    time.sleep(10)
     check_acm_certificate_status(arn)

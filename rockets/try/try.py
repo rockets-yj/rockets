@@ -2,6 +2,7 @@ import shutil
 import os
 import subprocess
 import json
+import time 
 
 def create_folder(folder_path):                                                       # 사용자 폴더 생성 
     try:
@@ -50,13 +51,35 @@ def chart(service_name, email):                                                 
 
 def nodegroup(service_name):                                                            # nodegroup.yaml 내용
 
-    ng = f"apiVersion: eksctl.io/v1alpha5\nkind: ClusterConfig\n\nmetadata:\n  name: rockets-eks\n  region: ap-northeast-2\n\nmanagedNodeGroups:\n  - name: {service_name}\n    labels:\n      nodegroup: {service_name}\n    instanceType: t3.medium\n    desiredCapacity: 1\n    volumesize: 20"
+    ng = f"apiVersion: eksctl.io/v1alpha5\nkind: ClusterConfig\n\nmetadata:\n  name: eks-rockets\n  region: ap-northeast-2\n\nmanagedNodeGroups:\n  - name: {service_name}\n    labels:\n      nodegroup: {service_name}\n    instanceType: t3.medium\n    desiredCapacity: 1\n    volumesize: 20"
     return ng
 
 
 
-def create_eks_nodegroup(path, service_name):                                            # nodegroup 생성 명령어 실행
+def create_eks_nodegroup(path, service_name, cluster):                                            # nodegroup 생성 명령어 실행
     command = f"eksctl create nodegroup --config-file=./{path}/nodegroup.yaml --include={service_name}"
+    
+    try:
+        subprocess.run(command, shell=True, check=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Nodegroup 생성 명령어 실행 중 오류 발생: {e}")
+        delete_eks_nodegroup(service_name, cluster)
+
+
+def delete_eks_nodegroup(path, service_name, cluster):                                            # nodegroup 생성 명령어 실행
+    command = f"eksctl delete nodegroup {service_name} --cluster={cluster}"
+    
+    try:
+        subprocess.run(command, shell=True, check=True)
+        create_eks_nodegroup(path, service_name)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Nodegroup 삭제 명령어 실행 중 오류 발생: {e}")
+
+
+def delete_namespace(service_name):                                            # nodegroup 생성 명령어 실행
+    command = f"kubectl delete namespace {service_name} --force --grace-period=0"
     
     try:
         subprocess.run(command, shell=True, check=True)
@@ -88,18 +111,20 @@ def create_service(service_name, image, port, email):
 def helm_delete(service_name):
     command = f"helm uninstall {service_name}"
     try:
+        delete_namespace(service_name)
         subprocess.run(command, shell=True, check=True)
         helm_start(service_name)
 
     except subprocess.CalledProcessError as e:
         print(f"helm 삭제 중 오류 발생: {e}")
+        delete_folder(service_name)
 
 
 def helm_start(service_name):                                          # helm repo가 잘 생성되면 폴더 삭제 
     command = f"helm install {service_name} {service_name}/"
     try:
         subprocess.run(command, shell=True, check=True)
-        delete_folder(service_name)
+        #delete_folder(service_name)
 
     except subprocess.CalledProcessError as e:
         print(f"helm 실행 중 오류 발생: {e}")
@@ -115,7 +140,7 @@ def get_load_balancer_dns(service_name):                               # 생성�
         # JSON 형식으로 반환된 결과 파싱
         response_json = json.loads(result.stdout)
         load_balancer_dns = response_json['LoadBalancers'][0]['DNSName']
-        
+
         return load_balancer_dns
     
     except subprocess.CalledProcessError as e:
@@ -126,11 +151,14 @@ def get_load_balancer_dns(service_name):                               # 생성�
 
 if __name__ == "__main__":
 
-    service_name = "trytest6"
+    service_name = "jjanghunwoo"
     image = "pengbai/docker-supermario"
     port = 8080
     email = "aaa@aaa.aaa"
+    cluster = "eks-rockets"
+    delete_folder(service_name)
     create_service(service_name, image, port, email)
-    create_eks_nodegroup(service_name, service_name)
+    create_eks_nodegroup(service_name, service_name, cluster)
     helm_start(service_name)
-    get_load_balancer_dns(service_name)
+    time.sleep(10)
+    print(get_load_balancer_dns(service_name))
