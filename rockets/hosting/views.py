@@ -7,6 +7,7 @@ from django.http import HttpResponse
 import os
 import zipfile
 from django.core.files.storage import FileSystemStorage
+<<<<<<< HEAD
 from django.conf import settings
 
 def delete_local_media_file(file_path):
@@ -34,6 +35,9 @@ file_to_delete = 'test231204.zip'
 
 # 로컬 media 폴더에서 파일 삭제
 delete_local_media_file(file_to_delete)
+=======
+from django.shortcuts import get_object_or_404
+>>>>>>> 45c74a42938ac908559b609c39f2b4619a616c92
 
 
 # Create your views here.
@@ -54,10 +58,10 @@ def userhostingPage(request):
 
 
 # 파일을 로컬에 저장
-def upload_file(request, file, serviceName):
+def upload_file(file, serviceName):
     if file :
         uploaded_file = file
-        print("uploaded_file: ", uploaded_file)
+        # print("uploaded_file: ", uploaded_file)
         
         # 로컬에 파일 저장
         fs = FileSystemStorage()
@@ -65,9 +69,9 @@ def upload_file(request, file, serviceName):
         # uploaded_file.name : 업로드된 파일의 원래 이름 / 객체에서 'name' 속성으로 가져온 원래 파일 이름
         # uploaded_file: 실제로 업로드된 파일 객체 / 새로운 이름
                         # 이 이름으로 로컬에 저장됨.
-        print("filename:", filename)
+        # print("filename:", filename)
         
-        
+        # fixme: 압축 파일 없을 때 처리하기
         # 압축 해제
         extract_path = os.path.join(fs.location, serviceName)  # 압축을 해제할 경로
         os.makedirs(extract_path, exist_ok=True)
@@ -77,7 +81,7 @@ def upload_file(request, file, serviceName):
 
         # 압축 해제된 파일들의 경로를 반환
         extracted_file_path = os.listdir(extract_path)
-        print("extracted_file_path: ", extracted_file_path)
+        # print("extracted_file_path: ", extracted_file_path)
         return extracted_file_path
         
     # return None
@@ -100,58 +104,30 @@ def create_s3(_serviceName, _extracted_file):
         # 3-2 S3에 파일 업로드하기
         # 1) 로컬에 저장한 파일을 S3에 올리기
         # 폴더로 올리기!!
-        s3_file_path = ""
         
-        # 압축 해제한 파일을 모두 포함시키기
-        # os.walk() : 지정된 디렉터리 아래에 있는 파일과 디렉터리를 순회하는 함수
-        # root : 현재 순회 중인 디렉토리의 경로
-        # dirs: 현재 디렉터리에 포함된 서브데릭터리의 리스트
-        # files : 해당 디렉터리에 포함된 파일들의 리스트
-        for root, dirs, files in os.walk(_extracted_file):
-            for file in files:
-                local_path = os.path.join(root, file)
-                print("for문 안에 local_path: " + local_path)
-                # s3_prefix = os.getcwd() + "/media/" + _serviceName + "/"
-                s3_prefix = ""
-                s3_file_path = os.path.join(s3_prefix, os.path.relpath(local_path, _extracted_file))
-                print("s3_file_path: ", s3_file_path)  
-                # os.path.relpath(a, b) : 두 경로 사이의 상대 경로를 반환, b를 기준으로 한 a의 상대 경로를 반환
-                # a : 파일의 전체 경로
-                # b : 기준이 되는 디렉터리의 경로
-                
-
+        local_folder_path = ""
+        s3_create_result = s3_fileupload_def.upload_to_s3(local_folder_path, _serviceName)
+        # print("s3_create_result: ", s3_create_result)
+        # s3_file_url = f'https://{bucket_name}.s3.{aws_region}.amazonaws.com/{s3_file_path}'
         
-                # 로컬 파일 경로 = hosting에서 받은 파일을 여기로 연결 
-                # local_file_path = os.getcwd() + "/" + _projectFile
-                # local_file_path = os.getcwd() + "/media/" + _serviceName
-                local_file_path = os.path.join(_extracted_file, file)
-                print("local_file_path: ", local_file_path)  #/home/rocket/git-workspace/leegit/rockets/rockets
+        # 2) S3에 올리면 로컬에 저장한 파일 지우기
+         # TODO -> 함수 따로 만들어서 ECR 뒤에 실행
+        
+        result = ""
+        if s3_create_result == 1 :
+            return 1
+        
+        else :            
+            return 0
             
-
-                s3_create_result = s3_fileupload_def.upload_to_s3(local_file_path, _serviceName, s3_file_path)
-                print("s3_create_result: ", s3_create_result)
-                # s3_file_url = f'https://{bucket_name}.s3.{aws_region}.amazonaws.com/{s3_file_path}'
-                
-                # 2) S3에 올리면 로컬에 저장한 파일 지우기
-                
-                result_msg = ""
-                if s3_create_result != 1 :
-                    result_msg = "파일 업로드 실패"
-                    break;
-                    
-        if not result_msg :
-            #todo: s3주소 db에 저장하기
-            result_mssg = "호스팅이 성공하였습니다."
-            
-        return result_msg 
+    
 
 
 # 호스팅 정보 삽입
 @csrf_exempt
 def userHosting(request):
     
-    """
-    # html에서 가져올 값
+    """ html에서 가져올 값
     # 1. 서비스이름
     # 2. 리전
         1 ap-northeast-2 Seoul
@@ -183,10 +159,10 @@ def userHosting(request):
         _port = request.POST.get("portNumber")
         _projectFile = request.FILES["projectFile"]
         
-        print("_projectFile:", _projectFile)
+        # print("_projectFile:", _projectFile)
+        # print("_serviceName:", _serviceName)
         
         
-        print("_serviceName:", _serviceName)
         # 1-2. 세션에 올린 userNo 가져오기
         userNo = request.session.get('UNO')
         # userNo = 1
@@ -199,18 +175,6 @@ def userHosting(request):
         backendData = BackendLanguage.objects.get(backend_no=_backendNo)
         dbData = DbList.objects.get(db_no=_dbNo)
 
-
-        # 그 중 원하는 값을 사용할 때
-        # now_naive = datetime.now()
-        # now_aware = timezone.make_aware(now_naive, timezone=timezone.get_current_timezone())
-        # timezone.activate(timezone.get_current_timezone())
-        # now_localized = timezone.localtime(now_aware)
-        
-        # regionData.region_name
-        # now = timezone.now()
-        # korea_time = timezone.localtime(now, timezone=timezone.get_current_timezone())
-        # print(korea_time)
-
         # 1-3.ServiceAws 테이블에 넣기
         service_aws_instance = Serviceaws(
             uno = userData, 
@@ -221,7 +185,7 @@ def userHosting(request):
             frontend_fl = _frontendFl,
             ecr_uri = None, # 또는 빈 문자열'' 할당 -> Null 
             load_balancer_name = None, 
-            s3_arn = None, 
+            s3_arn = "arn:aws:s3:::" + _serviceName + ".rockets-yj.com", 
             cloudfront_dns = None, 
             # create_date=now_localized 
             create_date=timezone.now(),
@@ -233,7 +197,7 @@ def userHosting(request):
         service_aws_instance.save()
 
         new_record_id = service_aws_instance.service_no
-        print("new_record_id: ", new_record_id)
+        # print("new_record_id: ", new_record_id)
         
         result = ""
 
@@ -242,18 +206,42 @@ def userHosting(request):
         # 2. 로컬에 파일 저장하기 (settings.py에 media 경로 연결하기)
         if new_record_id != 0:  
             # newfileName = _serviceName
-            _extracted_file = upload_file(request, _projectFile, _serviceName)
-            print("upload_file result: ", _extracted_file)
+            _extracted_file = upload_file(_projectFile, _serviceName)
+            # print("upload_file result: ", _extracted_file)
             
             if _extracted_file :
                 #TODO 
                 # 3. S3 생성하기
-                # 서비스 이름 가져오기
-                result = create_s3(_serviceName, _extracted_file)       
+                result = create_s3(_serviceName, _extracted_file) 
+                
+                if result == 1 : 
+                    result = "호스팅에 성공하였습니다."
+                    print('파일 업로드 완료')
+                
+                else :
+                    result = "호스팅에 실패하였습니다."
+            
             else :
-                result = "S3에 파일 업로드 실패"
-                    
-        else :
-            result = "호스팅에 실패하였습니다."
+                result = ""
+                
+        # 4. DB에 S3 주소 저장하기        
+        # if result == 1 :
+        #     '''
+        #     # s3 arn 주소 형식: arn:aws:s3:::your-bucket-name/your-object-key
+        #     # ex) arn:aws:s3:::1206zipfinal.rockets-yj.com
+        #     '''
+        #     s3_arn_addr = "arn:aws:s3:::" + _serviceName + ".rockets-yj.com"
+            
+        #     # 원하는 ServiceAws 인스턴스를 가져오기
+        #     service_instance = get_object_or_404(Serviceaws, service_no=userData.uno)
 
+        #     # 새로운 S3 ARN 값을 설정
+        #     service_instance.s3_arn = s3_arn_addr
+
+        #     # 변경사항을 저장
+        #     service_instance.save()
+            
+        #     result = "호스팅에 성공하였습니다."
+                                
+                
     return render(request, 'hosting/hostingResult.html', {'result' : result})
