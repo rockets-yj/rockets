@@ -25,7 +25,7 @@ def request_certificate(service_name):
 
     return certificate_arn
 
-def create_dns_record(arn):
+def create_dns_record(arn):                             # route53 레코드 생성 
     # ACM 인증서 정보 가져오기
     acm_certificate_arn = arn
     time.sleep(5)
@@ -70,7 +70,7 @@ def create_dns_record(arn):
         status = change_info['Status']
 
         while status == 'PENDING':
-            time.sleep(10)
+            time.sleep(20)
             response = route53_client.get_change(Id=change_info['Id'])
             change_info = response['ChangeInfo']
             status = change_info['Status']
@@ -99,7 +99,8 @@ def check_acm_certificate_status(arn):
 
 
 if __name__ == "__main__":
-    service_name = "acmtest5"
+    service_name = "iloveeunji"
     arn  = request_certificate(service_name)
     create_dns_record(arn)
+    time.sleep(10)
     check_acm_certificate_status(arn)
