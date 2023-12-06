@@ -253,7 +253,7 @@
               <label for="servicecName" class="form-label"><b>Name</b></label>
               <div class="input-group has-validation">
                 <!-- <span class="input-group-text">@</span> -->
-                <input type="text" class="form-control" name="serviceName" id="serviceName" placeholder="Name" required>
+                <input type="text" class="form-control" name="serviceName" id="serviceName" minlength="8" placeholder="Name" required oninput="validateInput()">
                 <div class="invalid-feedback">
                   Service name is required.
                 </div>
@@ -317,7 +317,11 @@
 
             <div class="col-12">
               <label for="servicecName" class="form-label"><b>Port (0-6535)</b></label>
+<<<<<<< HEAD
+              <input type="text" class="form-control" name=" " id="portNumber" placeholder="0 - 6535" maxlength="4" required>
+=======
               <input type="text" class="form-control" name="portNumber" id="portNumber" placeholder="0 - 6535" required>
+>>>>>>> ae9abbd7d410765b6e9dcf7e4ff39a06b25751cc
             </div>
 
             <div class="col-12">
@@ -342,7 +346,11 @@
             </div>
             
           </div>
-
+          <script> <!--추후 삭제 예정, required로 적용할 예정-->
+            {% if error %}
+              alert("{{ error }}");
+            {% endif %}
+          </script>
           <hr class="my-4">
 
           <div class="mb-3">
