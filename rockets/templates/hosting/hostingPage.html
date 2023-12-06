@@ -246,7 +246,7 @@
             
       
       <div class="col-md-7 col-lg-8 form-div" style="width: 650px;">
-        <form class="needs-validation"  method="POST" action="{% url 'hosting' %}">
+        <form class="needs-validation"  method="POST" action="{% url 'hosting' %}" enctype="multipart/form-data">
           <div class="row g-3">
 
             <div class="col-12">
@@ -317,7 +317,11 @@
 
             <div class="col-12">
               <label for="servicecName" class="form-label"><b>Port (0-6535)</b></label>
+<<<<<<< HEAD
               <input type="text" class="form-control" name=" " id="portNumber" placeholder="0 - 6535" maxlength="4" required>
+=======
+              <input type="text" class="form-control" name="portNumber" id="portNumber" placeholder="0 - 6535" required>
+>>>>>>> ae9abbd7d410765b6e9dcf7e4ff39a06b25751cc
             </div>
 
             <div class="col-12">

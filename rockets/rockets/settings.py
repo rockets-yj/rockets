@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'userStatus',
     'ECR',
     'corsheaders',
-
+    # 'storages',
 ]
 
 MIDDLEWARE = [
@@ -58,9 +58,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-
-
 ]
 
 
@@ -180,3 +177,9 @@ print(STATIC_ROOT)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+
+# S3Boto3Storage를 기본 파일 스토리지로 사용하도록 설정
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

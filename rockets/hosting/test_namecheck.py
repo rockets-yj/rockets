@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from rocket_admin.models import *
 from django.utils import timezone
+from s3_functions import *
 from datetime import datetime
 import re
-import boto3
+from django.http import HttpResponse
 
 @csrf_exempt
 def serviceNameCheck(service_name):
@@ -23,6 +25,5 @@ def serviceNameCheck(service_name):
         # return 값이 1일 때 아래 userHosting 실행하기 
         return 1
     
-
 result = serviceNameCheck('yangjutest')
 print(result)
