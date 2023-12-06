@@ -38,7 +38,8 @@ def upload_to_s3(local_folder_path, bucket_name):
                 
                 # S3에 업로드
                 s3.upload_file(local_file_path, bucket_name, s3_key)
-            return 1
+        
+        return 1
         
             
         # 업로드된 파일의 S3 주소 생성

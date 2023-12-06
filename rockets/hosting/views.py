@@ -45,6 +45,7 @@ def upload_file(file, serviceName):
         
         # fixme: 압축 파일 없을 때 처리하기
         # 압축 해제
+        print("fs.location:", fs.location)
         extract_path = os.path.join(fs.location, serviceName)  # 압축을 해제할 경로
         os.makedirs(extract_path, exist_ok=True)
 
@@ -188,7 +189,7 @@ def userHosting(request):
                 
                 if result == 1 : 
                     result = "호스팅에 성공하였습니다."
-                    print('파일 업로드 완료')
+                    print('S3 업로드 완료')
                 
                 else :
                     result = "호스팅에 실패하였습니다."
