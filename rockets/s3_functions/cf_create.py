@@ -1,7 +1,22 @@
 from django.shortcuts import render, redirect
 import boto3
+import os
 from rocket_admin.models import Serviceaws
 from .s3_bucket_create_def import printEndpoint
+
+
+# AWS 환경변수 session으로 가져오기 
+session = boto3.Session (
+    aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key= os.environ.get('AWS_SECRET_ACCESS_KEY'),
+    region_name= os.environ.get('REGION')
+)
+
+aws_access_key_id = session.get_credentials().access_key
+aws_secret_access_key = session.get_credentials().secret_key
+region_name = session.region_name
+
+
 
 def getServiceName(request):
     userNo = request.session.get('UNO');
@@ -17,6 +32,9 @@ def getServiceName(request):
 def create_cloudfront_distribution():
     # 변수 설정
     #optimize: 옵션으로 가져오기!
+    serviceName = getServiceName();
+    print("serviceName: ", serviceName)
+
     origin_domain_name = printEndpoint() # todo: 원본 도메인 주소 가져오기 = s3 엔드포인트 (from s3_bucket_create.py)\
     print(origin_domain_name)
     

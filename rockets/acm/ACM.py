@@ -13,7 +13,7 @@ def request_certificate(service_name):
 
     response = acm_client.request_certificate(
         DomainName=domain_name,
-         ValidationMethod='DNS',  
+        ValidationMethod='DNS',  
         SubjectAlternativeNames=[
             f"*.{domain_name}", 
             ],

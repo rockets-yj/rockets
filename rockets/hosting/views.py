@@ -86,7 +86,6 @@ def create_s3(_serviceName, _extracted_file):
         # 2) S3에 올리면 로컬에 저장한 파일 지우기
         # TODO -> 함수 따로 만들어서 ECR 뒤에 실행
         
-        result = ""
         if s3_create_result == 1 :
             return 1
         

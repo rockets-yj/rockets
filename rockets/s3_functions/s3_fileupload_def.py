@@ -1,4 +1,5 @@
 import boto3
+import mimetypes
 import os
 from botocore.exceptions import NoCredentialsError
 from django.core.files import File
@@ -22,7 +23,8 @@ def upload_to_s3(local_folder_path, bucket_name):
     s3_file_path : S3 버킷 안에 저장되는 경로
     '''
     service_name = bucket_name
-    local_folder_path = 'media/' + bucket_name  #bucket_name 자체는  = serviceName
+    local_folder_path = 'media/' + bucket_name #bucket_name 자체는  = serviceName
+    # local_folder_path = 'media/' 
     MAIN_DOMAIN = ".rockets-yj.com" 
     bucket_name = bucket_name + MAIN_DOMAIN
     
@@ -34,10 +36,24 @@ def upload_to_s3(local_folder_path, bucket_name):
         for root, dirs, files in os.walk(local_folder_path):
             for file_name in files:
                 local_file_path = os.path.join(root, file_name)
-                s3_key = f'{service_name}/{os.path.relpath(local_file_path, local_folder_path)}'
+                # s3_key = f'{service_name}/{os.path.relpath(local_file_path, local_folder_path)}'
+                s3_key = f'{os.path.relpath(local_file_path, local_folder_path)}'
+                
+                # 파일 확장자를 가져오기
+                _, file_extension = os.path.splitext(local_file_path)
+            
+                # ContentType을 결정하기 위해 파일 확장자를 기반으로 MIME 타입을 가져오기
+                content_type, _ = mimetypes.guess_type(local_file_path)
+                
+                # 파일이 인식되지 않는 경우 기본값으로 'application/octet-stream' 사용
+                if not content_type:
+                    content_type = 'application/octet-stream'
+            
+                # ContentType 메타데이터 설정
+                extra_args = {'ContentType': content_type}
                 
                 # S3에 업로드
-                s3.upload_file(local_file_path, bucket_name, s3_key)
+                s3.upload_file(local_file_path, bucket_name, s3_key, ExtraArgs=extra_args)
         
         return 1
         
