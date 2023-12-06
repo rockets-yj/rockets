@@ -14,30 +14,35 @@ session = boto3.Session (
 aws_region = os.environ.get('AWS_REGION')
 
 
-def upload_to_s3(local_file_path, bucket_name, s3_file_path):
+def upload_to_s3(local_folder_path, bucket_name):
 
     '''
     local_file_path : 로컬에서 저장되는 경로
     bukcet_name : 버킷이름 ( name.rockets-yj.com 형식)
     s3_file_path : S3 버킷 안에 저장되는 경로
     '''
-    
+    service_name = bucket_name
+    local_folder_path = 'media/' + bucket_name  #bucket_name 자체는  = serviceName
     MAIN_DOMAIN = ".rockets-yj.com" 
     bucket_name = bucket_name + MAIN_DOMAIN
     
     # Boto3 S3 클라이언트 생성
     s3 = session.client('s3')
-
+    
     try:
-        # 로컬 파일을 S3 버킷에 업로드
-        # s3.upload_fileobj(local_file_path, bucket_name, s3_file_path)
+        # 로컬 폴더의 파일 목록 가져오기
+        for root, dirs, files in os.walk(local_folder_path):
+            for file_name in files:
+                local_file_path = os.path.join(root, file_name)
+                s3_key = f'{service_name}/{os.path.relpath(local_file_path, local_folder_path)}'
+                
+                # S3에 업로드
+                s3.upload_file(local_file_path, bucket_name, s3_key)
+            return 1
         
-        with open(local_file_path, 'rb') as file :
-            s3.upload_fileobj(file, bucket_name, s3_file_path)
             
         # 업로드된 파일의 S3 주소 생성
         # s3_file_url = f'https://{bucket_name}.s3.{aws_region}.amazonaws.com/{s3_file_path}'
-        return 1
 
     except Exception as e:
         print(f'업로드 중 에러 발생: {e}')
