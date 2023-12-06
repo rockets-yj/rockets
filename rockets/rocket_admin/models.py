@@ -39,12 +39,16 @@ class Region(models.Model):
 
 
 class Serviceaws(models.Model):
+    SERVICE_NAME_CHOICES = [
+        ('helloworld', 'Hello World'),  # 이 부분은 실제 사용하는 서비스명에 맞게 수정하세요.
+        # 다른 서비스명도 필요에 따라 추가할 수 있습니다.
+    ]
     service_no = models.AutoField(db_column='SERVICE_NO', primary_key=True) 
-    uno = models.ForeignKey('Userinfo', models.DO_NOTHING, db_column='UNO')  
+    uno = models.ForeignKey('Userinfo', models.DO_NOTHING, db_column='uno')  
     region_no = models.ForeignKey(Region, models.DO_NOTHING, db_column='REGION_NO') 
     db_no = models.ForeignKey(DbList, models.DO_NOTHING, db_column='DB_NO') 
     backend_no = models.ForeignKey(BackendLanguage, models.DO_NOTHING, db_column='BACKEND_NO')  
-    service_name = models.CharField(db_column='SERVICE_NAME', max_length=255, blank=True, null=False)  
+    service_name = models.CharField(db_column='SERVICE_NAME', max_length=255, choices=SERVICE_NAME_CHOICES, null=False)  
     ecr_uri = models.CharField(db_column='ECR_URI', max_length=255, blank=True, null=True) 
     load_balancer_name = models.CharField(db_column='LOAD_BALANCER_NAME', max_length=255, blank=True, null=True)  
     s3_arn = models.CharField(db_column='S3_ARN', max_length=255, blank=True, null=True)  

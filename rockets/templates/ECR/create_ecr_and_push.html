@@ -1,3 +1,5 @@
+<!-- create_ecr_and_push.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,15 +10,78 @@
 </head>
 
 <body>
-    <h1>Create ECR and Push Image</h1>
-    <form action="{% url 'create_ecr_and_push' %}" method="post">
-        {% csrf_token %}
-        <label for="service_name">서비스명:</label>
-        <input type="text" name="service_name" required><br>
-        <label for="region">리전:</label>
-        <input type="text" name="region" required><br>
-        <input type="submit" value="Create ECR and Push Image">
-    </form>
+    <div id="container">
+        <h1>Create ECR and Push Image</h1>
+
+        <form id="ecr-form" action="{% url 'create_ecr_and_push' %}" method="post">
+            {% csrf_token %}
+            <label for="service_name">서비스명:</label>
+            <input type="text" name="service_name" required><br>
+            <label for="region">리전:</label>
+            <input type="text" name="region" required><br>
+            <input type="submit" value="Create ECR and Push Image">
+        </form>
+
+        <div id="loading-message" style="display: none;">이미지 푸시 중입니다. 잠시만 기다려 주세요. 약 5분 소요됩니다.</div>
+
+        <div id="result-container" style="display: none;">
+            <div id="result-message"></div>
+            <button id="refresh-button" style="display: none;">새로 고침</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ecr-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // "새로 고침" 버튼 숨기고, "생성 중" 메시지 표시
+            document.getElementById('refresh-button').style.display = 'none';
+            document.getElementById('loading-message').style.display = 'block';
+
+            // 폼을 비동기적으로 제출
+            fetch(this.action, {
+                    method: this.method,
+                    body: new FormData(this),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest', // 추가
+                    },
+                })
+                .then(response => response.json()) // 변경
+                .then(data => {
+                    // "생성 중" 메시지 숨기고, 결과 메시지 표시 및 "새로 고침" 버튼 표시
+                    document.getElementById('loading-message').style.display = 'none';
+                    document.getElementById('result-container').style.display = 'block';
+
+                    if (data.message.includes('푸시되었습니다.')) {
+                        // 이미지 푸시 완료 시 결과 메시지 표시 및 "새로 고침" 버튼 표시
+                        document.getElementById('result-message').innerHTML = data.message;
+                        document.getElementById('refresh-button').style.display = 'block';
+
+                        // 폼 숨기기
+                        document.getElementById('ecr-form').style.display = 'none';
+                    } else {
+                        // 이미지 푸시 중 에러 메시지 표시
+                        document.getElementById('result-message').innerHTML = '에러 발생: ' + data.message;
+                        document.getElementById('refresh-button').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    // 에러 발생 시 처리
+                    console.error('에러 발생:', error);
+
+                    // "생성 중" 메시지 숨기고, 에러 메시지 표시 및 "새로 고침" 버튼 표시
+                    document.getElementById('loading-message').style.display = 'none';
+                    document.getElementById('result-container').style.display = 'block';
+                    document.getElementById('result-message').innerHTML = '에러 발생: ' + error;
+                    document.getElementById('refresh-button').style.display = 'block';
+                });
+        });
+
+        // "새로 고침" 버튼 클릭 시 페이지 새로고침
+        document.getElementById('refresh-button').addEventListener('click', function() {
+            location.reload();
+        });
+    </script>
 </body>
 
 </html>
