@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from ecr_functions import *
 from rocket_admin.models import *
 from django.views.decorators.csrf import csrf_exempt
@@ -13,6 +13,9 @@ import os
 import subprocess
 import re
 import shlex
+from rocket_admin.models import Serviceaws, Userinfo
+
+
 
 
 
@@ -26,6 +29,7 @@ def create_ecr(request):
         else:
             return JsonResponse({'error_message': 'Service name is required.'}, status=400)
     return render(request, 'ECR/create_ecr.html')
+
 
 
 
@@ -108,7 +112,13 @@ def push_to_ecr(request):
 def create_ecr_and_push_image(service_name, region):
     # Step 1: Create ECR repository
     ecr_client = boto3.client('ecr', region_name=region)
-    repository_name = re.sub(r'[^a-z0-9_]', '_', service_name.lower())
+    repository_name = re.sub(r'[^a-z0-9-]', '-', service_name.lower())
+    ecr_repository_uri=''
+
+    # service_name_lower 정의
+    service_name_lower = service_name.lower()
+    current_user=''
+
 
     try:
         response = ecr_client.create_repository(repositoryName=repository_name)
@@ -129,12 +139,39 @@ def create_ecr_and_push_image(service_name, region):
         return
 
     # Step 3: Tag Docker image for ECR
+    # serviceaws_entry = None  # 변수를 미리 선언해줍니다.
+
+
+    # 사용자 정보를 가져오거나 적절한 방법으로 사용자 `uno` 값을 설정
+    # user_info = Userinfo.objects.get(uno=1)  # 여기서 ...에는 적절한 조건이나 필터링이 들어가야 합니다.
+    # region_no = Region.objects.get(region_no=1)
+    # db_no = DbList.objects.get(db_no=1)
+    # backend_no = BackendLanguage.objects.get(backend_no=1)
+
     try:
         account_id = boto3.client('sts').get_caller_identity().get('Account')
         ecr_repository_uri = f"{account_id}.dkr.ecr.{region}.amazonaws.com/{repository_name}:latest"
-        subprocess.run(['docker', 'tag', f'{repository_name}-image:latest', ecr_repository_uri])
+        
+            # Create a database entry
+        # serviceaws_entry = Serviceaws.objects.create(
+        #    uno=user_info,
+        #    region_no=region_no,
+        #    db_no=db_no,
+        #    backend_no=backend_no,
+        #    service_name = _serviceName,
+        # Add other fields if needed
+        # )
+
+    # Tag Docker image for ECR
+        try:
+            subprocess.run(['docker', 'tag', f'{repository_name}-image:latest', ecr_repository_uri])
+        except Exception as tag_error:
+            print(f"태깅 중 오류 발생: {tag_error}")
+        # 여기에서 오류 처리를 수행하거나 필요한 경우 serviceaws_entry를 삭제할 수 있습니다.
+        # 
     except Exception as e:
         print(f"Docker 이미지를 ECR에 태깅하는 중 오류 발생: {e}")
+    # 여기에서 오류 처리를 수행하거나 필요한 경우 serviceaws_entry를 삭제할 수 있습니다.
         return
 
     # Step 4: Login to ECR
@@ -154,10 +191,33 @@ def create_ecr_and_push_image(service_name, region):
 
     # Step 5: Push Docker image to ECR
     try:
-        subprocess.run(['docker', 'push', ecr_repository_uri])
+        subprocess.run(['docker', 'push', ecr_repository_uri])        
+        
+
+        # 현재 사용자를 가져와서 'UNO' 값을 설정
+        current_user = Userinfo.objects.get(uname='name001')
+        
+        # 데이터베이스 엔트리 생성 또는 업데이트
+        service_aws_entry = Serviceaws.objects.get(
+            service_name=service_name_lower,
+            uno=current_user.uno,
+        )
+        service_aws_entry.ecr_uri = ecr_repository_uri
+        service_aws_entry.save()
         print("Docker 이미지를 ECR에 성공적으로 푸시했습니다.")
+        # 이 이후에 db serviceaws 필드에 새로 하나 넣기
+        
+        # 값 넣는것은 생성 이후
+        # 데이터베이스 엔트리 생성
+        # serviceaws_entry = Serviceaws.objects.create(
+        #    service_name=service_name,
+        #    ecr_uri=ecr_repository_uri,
+        # 다른 필드가 있다면 필요한대로 추가하세요
+    #    )
+        print(f"{service_name}에 대한 데이터베이스 엔트리가 생성 또는 업데이트되었습니다.")
     except Exception as e:
         print(f"Docker 이미지를 ECR에 푸시하는 중 오류 발생: {e}")
+
 
 def create_ecr_and_push(request):
     if request.method == 'POST':
@@ -165,9 +225,40 @@ def create_ecr_and_push(request):
         region = request.POST.get('region')
 
         try:
+            # 이미지 빌드 및 푸시 로직 호출
             create_ecr_and_push_image(service_name, region)
-            return HttpResponse(f"ECR 생성 및 이미지 빌드 및 푸시 성공! (서비스명: {service_name}, 리전: {region})")
+            message = f"{service_name} 서비스에 대한 ECR 이미지가 성공적으로 푸시되었습니다."
+            return JsonResponse({'message': message})
+
+            # 이미지 빌드 및 푸시가 완료되면 템플릿에 전달할 데이터 생성
+            context = {
+                'image_build_complete': True,  # 이미지 빌드 및 푸시 완료 여부
+            }
+
+            return render(request, 'ECR/create_ecr_and_push.html', context)
         except Exception as e:
-            return HttpResponse(f"에러 발생: {e}")
+            return JsonResponse(f"에러 발생: {e}")
     else:
         return render(request, 'ECR/create_ecr_and_push.html')
+    
+
+
+def create_hosting_main(request):
+    service_name=request.POST.get('service_name')
+    #upload 함수
+    #S3(servie_name) 함수
+    #ECR(service_name) 함수
+    #Helm(service_name) 함수
+    #ACM(service_name) 함수
+    #CloudFront(service_name) 함수
+    #Route53(service_name) 함수
+
+def delete_hosting_main(request):
+    service_name=request.POST.get('service_name')
+    #upload 함수
+    #Route53(service_name) 함수
+    #CloudFront(service_name) 함수
+    #ACM(service_name) 함수
+    #Helm(service_name) 함수
+    #ECR(service_name) 함수
+    #S3(servie_name) 함수
