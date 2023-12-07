@@ -95,9 +95,6 @@ def create_s3(_serviceName, _extracted_file):
     
 
 
-# 호스팅 정보 삽입
-@csrf_exempt
-def userHosting(request):
     
     """ html에서 가져올 값
     # 1. 서비스이름
@@ -117,6 +114,9 @@ def userHosting(request):
     # 6. 파일
 
     """
+# 호스팅 정보 삽입
+@csrf_exempt
+def userHosting(request):
 
 
     if request.method == 'POST' :
@@ -139,9 +139,25 @@ def userHosting(request):
         userNo = request.session.get('UNO')
         # userNo = 1
         
-        # 정규식, lower, trim 써서 정규식에 맞는지 한번 더 확인
+        #정규식, lower, trim 써서 정규식에 맞는지 한번 더 확인
 
-        # 해당하는 regionno에 해당하는 값을 가져옴 (한 행을 다 가져옴)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         userData = Userinfo.objects.get(uno=userNo)
         regionData = Region.objects.get(region_no=_regionNo)
         backendData = BackendLanguage.objects.get(backend_no=_backendNo)
@@ -187,33 +203,13 @@ def userHosting(request):
                 result = create_s3(_serviceName, _extracted_file) 
                 
                 if result == 1 : 
-                    result = "호스팅에 성공하였습니다."
+                    result = "호스팅 성공"
                     print('S3 업로드 완료')
                 
                 else :
-                    result = "호스팅에 실패하였습니다."
+                    result = "호스팅 실패"
             
             else :
-                result = ""
-                
-        # 4. DB에 S3 주소 저장하기        
-        # if result == 1 :
-        #     '''
-        #     # s3 arn 주소 형식: arn:aws:s3:::your-bucket-name/your-object-key
-        #     # ex) arn:aws:s3:::1206zipfinal.rockets-yj.com
-        #     '''
-        #     s3_arn_addr = "arn:aws:s3:::" + _serviceName + ".rockets-yj.com"
-            
-        #     # 원하는 ServiceAws 인스턴스를 가져오기
-        #     service_instance = get_object_or_404(Serviceaws, service_no=userData.uno)
-
-        #     # 새로운 S3 ARN 값을 설정
-        #     service_instance.s3_arn = s3_arn_addr
-
-        #     # 변경사항을 저장
-        #     service_instance.save()
-            
-        #     result = "호스팅에 성공하였습니다."
-                                
+                result = "S3 생성 실패"
                 
     return render(request, 'hosting/hostingResult.html', {'result' : result})
