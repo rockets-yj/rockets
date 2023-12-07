@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 import boto3
 import os
 from rocket_admin.models import Serviceaws
-from .s3_bucket_create_def import printEndpoint
 
 
 # AWS 환경변수 session으로 가져오기 
@@ -17,7 +16,7 @@ aws_secret_access_key = session.get_credentials().secret_key
 region_name = session.region_name
 
 
-
+# 서비스명 가져오기
 def getServiceName(request):
     userNo = request.session.get('UNO');
     
@@ -28,23 +27,27 @@ def getServiceName(request):
     return serviceName
 
 
-
+# CloudFront 생성하기
 def create_cloudfront_distribution():
     # 변수 설정
     #optimize: 옵션으로 가져오기!
     serviceName = getServiceName();
     print("serviceName: ", serviceName)
 
-    origin_domain_name = printEndpoint() # todo: 원본 도메인 주소 가져오기 = s3 엔드포인트 (from s3_bucket_create.py)\
-    print(origin_domain_name)
+    # todo: 원본 도메인 주소 가져오기 = s3 엔드포인트 (from s3_bucket_create.py)
+    # s3_website_endpoint: http://{bucket_name}.s3-website.{region_name}.amazonaws.com'
+    s3_website_endpoint = "http://" + serviceName + ".s3-website." + region_name + ".amazonaws.com"
+    origin_domain_name = s3_website_endpoint
+    print("origin_domain_name: " + origin_domain_name)
     
-    cname="yountest1234.rockets-yj.com" #fixme: serviceName + "rockets-yj.com"
-    viewer_protocol_policy='redirect-to-https'
-    firewall_settings=False
-    ssl_certificate_arn="arn:aws:acm:us-east-1:610264642862:certificate/98015bf7-2384-4ccd-9597-0b65d6a92873" # todo: 윤지가 만든 ssl 인증서 가져오기
-    default_root_object='index.html'
-    distribution_settings=None
-    bucket_name="youngtesttest12345"
+    # cname : 대체 도메인 이름
+    cname = serviceName + "rockets-yj.com" 
+    viewer_protocol_policy = 'redirect-to-https' #뷰어 프로토콜 정책
+    firewall_settings = False
+    ssl_certificate_arn = "arn:aws:acm:us-east-1:610264642862:certificate/98015bf7-2384-4ccd-9597-0b65d6a92873" # todo: 윤지가 만든 ssl 인증서 가져오기
+    default_root_object = 'index.html'
+    distribution_settings = None
+    bucket_name = serviceName
     
     '''
     # todo: 
@@ -53,9 +56,6 @@ def create_cloudfront_distribution():
     # 3) s3 엔드포인트 넣기
     '''
     
-    
-    #fixme
-    serviceName = "test1234"
     
     # AWS CloudFront 클라이언트 생성
     client = boto3.client('cloudfront')
@@ -121,29 +121,6 @@ def create_cloudfront_distribution():
         print(f'CloudFront distribution created successfully with ID: {distribution_id}')
     except Exception as e:
         print(f'Error creating CloudFront distribution: {e}')
-
-    # 예시: 사용자 정의 SSL 인증서를 선택하여 CloudFront 배포 생성
-    # additional_settings = {
-    #     'Comment': 'My CloudFront Distribution',
-    #     'Logging': {
-    #         'Enabled': True,
-    #         'IncludeCookies': False,
-    #         'Bucket': 'my-logs-bucket',
-    #         'Prefix': 'cloudfront-logs/',
-    #     },
-    #     'Firewall': {
-    #         'Enabled': True,
-    #         'WebACLId': 'your-web-acl-id',
-    #     },
-    #     'ViewerCertificate': {
-    #         'ACMCertificateArn': 'your-acm-certificate-arn',  # ACM SSL/TLS 인증서 ARN 입력
-    #         'SSLSupportMethod': 'sni-only',
-    #     },
-    #     # 다른 설정들...
-    # }
-
-    # CloudFront 배포 생성 함수 호출
-    # create_cloudfront_distribution('example.com', 'your-origin-endpoint', cname='cdn.example.com', distribution_settings=additional_settings)
 
 
 create_cloudfront_distribution()
