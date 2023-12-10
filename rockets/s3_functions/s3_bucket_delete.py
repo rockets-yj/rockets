@@ -16,7 +16,7 @@ region_name = session.region_name
 
 # 버킷 안에 모든 데이터를 삭제해야 버킷 삭제가 가능함
 # 버킷 안 데이터 삭제 하는 함수 delete_all_objects_in_bucket
-def delete_all_objects_in_bucket(bucket_name):
+def delete_s3_bucket(bucket_name):
     # boto3 S3 클라이언트 생성
     s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key, region_name=region_name)
 
@@ -28,33 +28,17 @@ def delete_all_objects_in_bucket(bucket_name):
         for obj in response.get('Contents', []):
             s3.delete_object(Bucket=bucket_name, Key=obj['Key'])
             print(f"Object '{obj['Key']}' deleted from bucket '{bucket_name}'")
-
+        s3.delete_bucket(Bucket=bucket_name)
+        
         print(f"All objects deleted from bucket '{bucket_name}'")
     except Exception as e:
         print(f"Error deleting objects from bucket '{bucket_name}': {e}")
 
-# 버킷 삭제하는 함수 delete_all_objects_in_bucket를 받아와서 쓰기 때문에 위 코드랑 같이 사용해야 함 
-def delete_s3_bucket(bucket_name):
-    # boto3 S3 클라이언트 생성
-    s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key, region_name=region_name)
-
-    try:
-        # 버킷 안의 모든 객체 삭제
-        delete_all_objects_in_bucket(bucket_name)
-
-        # S3 버킷 삭제
-        s3.delete_bucket(Bucket=bucket_name)
-        print(f"S3 bucket '{bucket_name}' deleted successfully.")
-    except Exception as e:
-        print(f"Error deleting S3 bucket '{bucket_name}': {e}")
-
-
-for i in range(20, 31, 1):
-    delete_s3_bucket(f"1205test{i}.rockets-yj.com")
-
+for i in range(10, 20, 1):
+    delete_s3_bucket(f"testtest{i}.rockets-yj.com")
 
 # # 삭제할 bucket name을 여기에 변수로 선언하기 -> DB와 연결필요
-# delete_bucket_name = "1205test9.rockets-yj.com"
+# delete_bucket_name =  "ilovejinnam3.rockets-yj.com"
 
 # # 함수 실행하기
 # delete_s3_bucket(delete_bucket_name)

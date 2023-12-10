@@ -253,7 +253,7 @@
               <label for="servicecName" class="form-label"><b>Name</b></label>
               <div class="input-group has-validation">
                 <!-- <span class="input-group-text">@</span> -->
-                <input type="text" class="form-control" name="serviceName" id="serviceName" minlength="8" placeholder="Name" required oninput="validateInput()">
+                <input type="text" class="form-control" name="serviceName" id="serviceName" minlength="8" placeholder="Name" action="{% url 'serviceNameCheck' %}" required oninput="validateInput()">
                 <div class="invalid-feedback">
                   Service name is required.
                 </div>
