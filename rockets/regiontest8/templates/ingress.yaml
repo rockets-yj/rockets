@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ingress.name }}
+  namespace: {{ .Values.namespace.name }}
+  annotations:
+    #kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: {{ .Values.ingress.name }}                            # 우선순위
+    alb.ingress.kubernetes.io/scheme: internet-facing                          # internet-facing or internal
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'                  # '[{"HTTP": 80}, {"HTTPS": 443}]', 생략 시 HTTP는 80, HTTPS는 443
+    #alb.ingress.kubernetes.io/security-groups: sg-0b3c6b340549c11b7                  # alb 경우 보안그룹 지정, Inbound HTTP 허용
+    alb.ingress.kubernetes.io/target-type: ip                            # instance or ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTP                           # HTTP or HTTPS
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP                       # HTTP or HTTPS
+    alb.ingress.kubernetes.io/healthcheck-path: "/"                            # Healthcheck 경로 지정 
+
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Values.service.name }}                                                  # service.yaml의 metadata.name
+              port:
+                number: 80

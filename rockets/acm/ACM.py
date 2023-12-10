@@ -1,7 +1,7 @@
 #from django.shortcuts import render,redirect
 import boto3
 import time
-#from rocket_admin.models import Serviceaws, Userinfo
+from rocket_admin.models import Serviceaws, Userinfo
 
 
 def request_certificate(service_name):
@@ -104,3 +104,17 @@ if __name__ == "__main__":
     create_dns_record(arn)
     time.sleep(10)
     check_acm_certificate_status(arn)
+    
+
+# acm 생성하기 _ 위에 함수 통합
+def create_acm(service_name):
+    # userNo = request.session.get('UNO');
+    # service = Serviceaws.objects.get(uno=userNo)
+    # serviceName = service.service_name
+    arn  = request_certificate(service_name)
+    dns = create_dns_record(arn)
+    
+    print("arn:", arn)
+    print("dns:", dns)
+    
+    return arn

@@ -134,7 +134,7 @@ def create_service(service_name, image, port, email):
     target_folder = service_name
     create_folder(target_folder)
 
-    source_folder = "templates"
+    source_folder = "try_helm/templates"
     destination_folder = os.path.join(target_folder, "./templates")
     copy_folder(source_folder, destination_folder)
     values_yaml = os.path.join(target_folder, "values.yaml")
@@ -162,7 +162,7 @@ def helm_delete(service_name):
 
 
 def helm_start(service_name):                                          # helm repo가 잘 생성되면 폴더 삭제 
-    command = f"helm install {service_name} {service_name}/"
+    command = f"helm install {service_name} /home/rocket/git-workspace/leegit/rockets/rockets/{service_name}/"
     try:
         subprocess.run(command, shell=True, check=True)
         delete_folder(service_name)
@@ -198,7 +198,7 @@ if __name__ == "__main__":
     email = "aaa@aaa.aaa"
     cluster = "eks-rockets"
     delete_folder(service_name)
-    create_service(service_name, image, port, email)
+    create_service(service_name, image, port, email='')
     create_eks_nodegroup(service_name, service_name, cluster)
     helm_start(service_name)
     time.sleep(10)                                   # 바로 LB 못 불러와서 잠시 후 불러오기 위해서

@@ -3,6 +3,8 @@ import boto3
 import os
 from rocket_admin.models import Serviceaws
 from try_helm import *
+from acm import ACM 
+
 
 # AWS 환경변수 session으로 가져오기 
 session = boto3.Session (
@@ -23,26 +25,34 @@ def create_acm_certificate(request, service_name):
     userNo = request.session.get('UNO');
     
     service = Serviceaws.objects.get(uno=userNo)
+    serviceName = service.service_name
     print("service: ", service)
 
-    #todo: 1. Helm 사전작업
-    # 1-1) 서비스 생성하기 _헬름
-    image = service.ecr_uri
-    port = service.port
-    email = service.email
-    try_helm.create_service(service_name, image, port, email)
-        
+    # #todo: 1. Helm 사전작업
+    # # 1-1) 서비스 생성하기 _헬름
+    # image = service.ecr_uri
+    # port = service.port
+    # email = service.email
+    
+    # try_helm.create_service(service_name, image, port, email)
 
+    # # 1-2) eks nodegroup 생성하기
+    # try_helm.cre
 
-
-    # 1-2) eks nodegroup 생성하기
-
-    #todo: 2. Helm
-    # 2-1) 헬름 시작
-    # 2-2) 로드밸런서 dns 가져오기
-    # 2-3) 로드밸런서 dns, DB에 저장하기
+    # #todo: 2. Helm
+    # # 2-1) 헬름 시작
+    # # 2-2) 로드밸런서 dns 가져오기
+    # # 2-3) 로드밸런서 dns, DB에 저장하기
 
     #todo: 3. ACM 인증서
-    # 3-1) 인증서 요청
-    # 3-2) dns 생성하기
-    # 3-3) CloudFront에 연결하기
+    def create_acm() :
+        # 3-1) 인증서 요청
+        certificate_arn = ACM.request_certificate(service_name)
+        
+        # 3-2) dns 생성하기
+        dns = ACM.create_dns_record(certificate_arn)
+            
+        return dns 
+    
+        # 3-3) CloudFront에 연결하기
+    
