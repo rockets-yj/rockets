@@ -2,7 +2,7 @@ services:
   django:
     container_name: rockets
     build:
-      dockerfile: $PWD/rocketsBuilder
+      dockerfile: $PWD/dockerfile
     restart: always
     volumes:
       - $PWD/rockets/:/rockets/
