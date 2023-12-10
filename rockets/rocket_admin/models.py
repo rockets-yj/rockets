@@ -55,7 +55,8 @@ class Serviceaws(models.Model):
     cloudfront_dns = models.CharField(db_column='CLOUDFRONT_DNS', max_length=255, blank=True, null=True)  
     frontend_fl = models.CharField(db_column='FRONTEND_FL', max_length=4,blank=True, null=True)
     create_date = models.DateTimeField(db_column='CREATE_DATE', auto_now_add=True) 
-    port = models.IntegerField(db_column='PORT', blank=True, null=False, default=80) 
+    port = models.IntegerField(db_column='PORT', blank=True, null=False, default=80)
+    domain = models.CharField(db_column='DOMAIN',max_length=255, null=True) 
     
     def json(self):
         return {

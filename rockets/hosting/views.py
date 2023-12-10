@@ -10,6 +10,59 @@ import os
 import zipfile
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import get_object_or_404
+from acm import ACM
+from ecr_functions import *
+from ECR.views import *
+from s3_functions import * 
+from try_helm import *
+from cloudfront import *  
+from hosting.views import *
+import time 
+
+
+session = boto3.Session (
+    aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key= os.environ.get('AWS_SECRET_ACCESS_KEY'),
+    region_name= os.environ.get('REGION')
+)
+
+
+@csrf_exempt
+def serviceNameCheck(serviceName):
+    # 영문 소문자와 -만 허용하도록 정규표현식 사용
+    if not re.match("^[a-z0-9-]+$", serviceName):
+        error_message = '서비스 이름은 영문 소문자와 -만 사용 가능합니다.'
+        print(error_message)
+        #return render(serviceName, 'hosting/hostingPage.html', {'error' : '서비스 이름은 영문 소문자, 숫자, -만 사용 가능합니다.'} )
+        return error_message
+    #return값 error 프린트하고 hosting 페이지로 돌아가기
+
+    # 숫자만 입력된 경우 처리
+    if serviceName.isdigit():
+        error_message = '서비스 이름에는 숫자만 입력할 수 없습니다.'
+        print(error_message)
+        #return render(serviceName, 'hosting/hostingPage.html', {'error' : '서비스 이름에는 숫자만 입력할 수 없습니다.'} )
+        return error_message
+    #return값 error 프린트하고 hosting 페이지로 돌아가기
+
+    # 소문자로 변경하고 trim 적용 -> 그러면 processed_service_name을 아래에서 확인해야하나?
+    processed_service_name = serviceName.lower().strip()
+    print(processed_service_name)
+
+    # 여기 DB service_name과 위에proceseed_service_name이 중복되는지 중복값 비교  
+    if Serviceaws.objects.filter(service_name=processed_service_name).exists():
+        error_message = '이미 사용중인 서비스 이름입니다.'
+        print(error_message)
+        #return render(processed_service_name, 'hosting/hostingPage.html', {'error' : '이미 사용중인 아이디 입니다.'} )
+        return error_message
+        #return값 error 프린트하고 hosting 페이지로 돌아가기
+
+    else:
+        # return 값이 1일 때 아래 userHosting 실행하기
+        print("1")
+        return True
+
+
 
 
 # Create your views here.
@@ -59,6 +112,53 @@ def upload_file(file, serviceName):
         
     # return None
 
+def addDomain(service_name,cloud_front):
+    # Route 53 클라이언트를 생성합니다.
+    client = session.client('route53')
+    print(f'{service_name} : {cloud_front}')
+    # 도메인에 레코드를 생성
+    domain_name = 'rockets-yj.com'
+
+    # 도메인 id 확인
+    response = client.list_hosted_zones_by_name() # 모든 hosted Zone 을 가져옴
+    hosted_zone_id = None
+
+    for hosted_zone in response['HostedZones']:
+        if hosted_zone['Name'] == domain_name + '.' :
+            hosted_zone_id = hosted_zone['Id']
+            break
+        
+    # /hostedzone/Z0958311YBP9BJL383S5 이런식으로 반환을 하기 때문에 앞의 /hostedzone/ 을 삭제한다
+    hosted_zone_id = hosted_zone_id.split("/hostedzone/")[1]
+    print(hosted_zone_id)
+
+    # 로드밸런서의 주소
+    cloud_front_dns = cloud_front
+
+    response = client.change_resource_record_sets(
+        HostedZoneId = hosted_zone_id,
+        ChangeBatch={
+            'Changes': [
+                {
+                    'Action': 'UPSERT',
+                    'ResourceRecordSet': {
+                        'Name': f'www.{service_name}.rockets-yj.com', # 원하는 도메인 이름
+                        'Type': 'CNAME', # ipv4 주소는 A, dns 는 CNAME ,
+                        'TTL': 300,
+                        'ResourceRecords': [
+                            {
+                                'Value': cloud_front_dns
+                            },
+                        ],
+                    }
+                },
+            ]
+        }
+    )
+    return f'www.{service_name}.rockets-yj.com'
+
+
+
 
 # s3 생성 함수
 def create_s3(_serviceName, _extracted_file):
@@ -92,8 +192,6 @@ def create_s3(_serviceName, _extracted_file):
         else :            
             return 0
             
-    
-
 
     
     """ html에서 가져올 값
@@ -140,20 +238,6 @@ def userHosting(request):
         # userNo = 1
         
         #정규식, lower, trim 써서 정규식에 맞는지 한번 더 확인
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -212,4 +296,50 @@ def userHosting(request):
             else :
                 result = "S3 생성 실패"
                 
-    return render(request, 'hosting/hostingResult.html', {'result' : result})
+    return True
+
+
+
+@csrf_exempt
+def all_in_one(request):
+    _service_name = request.POST.get('serviceName')
+    _service_name = str(_service_name).lower()
+    RegionNo = request.POST.get('regionNo')
+    result = ''
+    # ecr 생성    
+    try:
+        service_check = serviceNameCheck(_service_name)
+        if service_check is True :
+            pass
+        else :
+            return render(request, 'hosting/hostingPage.html', { 'error' : service_check})
+        
+        
+        userHosting(request)
+        
+        _service = Serviceaws.objects.get(service_name=_service_name)
+        print(_service.region_no.region_no, type(_service.region_no.region_no))
+        _region_no = int(_service.region_no.region_no)
+        region =  Region.objects.get(region_no=_region_no)   
+        print(region)  
+        
+        _service.ecr_uri = create_ecr_and_push_image(_service_name, region.region_code)
+        _service.save()
+        
+        try_helm.delete_folder(_service_name)
+        try_helm.create_service(_service_name, _service.ecr_uri, _service.port, _service_name)
+        try_helm.create_eks_nodegroup(_service_name, _service_name, 'eks-rockets')
+        try_helm.helm_start(_service_name)
+        time.sleep(10)                                   # 바로 LB 못 불러와서 잠시 후 불러오기 위해서
+        _service.load_balancer_name = try_helm.get_load_balancer_dns(_service_name)
+        _service.save()
+        _service.cloudfront_dns = cf_create.create_cloudfront_distribution(_service_name,_service.load_balancer_name)
+        _service.save()
+        _service.domain=addDomain(_service_name, _service.cloudfront_dns)
+        _service.save()
+        result = "호스팅에 성공하였습니다."
+        
+        return render(request, 'hosting/hostingResult.html', {'result' : result, 'dns' : _service.domain})
+    except Exception as e :
+        return render (request,'hosting/hostingResult.html', {'result': f' 에러: {e}'})
+    

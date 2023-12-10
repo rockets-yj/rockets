@@ -1,0 +1,14 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-rockets
+  region: ap-northeast-2
+
+managedNodeGroups:
+  - name: regiontest8
+    labels:
+      nodegroup: regiontest8
+    instanceType: t3.medium
+    desiredCapacity: 1
+    volumesize: 20

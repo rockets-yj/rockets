@@ -1,0 +1,24 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+{% comment %} <head><script src="../assets/js/color-modes.js"></script> {% endcomment %}
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.118.2">
+    <title>Rockets</title>
+
+    <body>
+
+        <form action="{% url "all_in_one" %}" method="POST" >
+            <label for="query">CloudFront</label>
+            <input type="text" name="serviceName" ></input>              
+            <button type="submit">CloudFront 생성</button>
+        </form>
+        <a href="//{{ dns }}" >{{ dns }}</a>
+
+    </body>
+
+</html>

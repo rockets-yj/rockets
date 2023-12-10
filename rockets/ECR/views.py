@@ -199,8 +199,7 @@ def create_ecr_and_push_image(service_name, region):
         
         # 데이터베이스 엔트리 생성 또는 업데이트
         service_aws_entry = Serviceaws.objects.get(
-            service_name=service_name_lower,
-            uno=current_user.uno,
+            service_name=service_name_lower
         )
         service_aws_entry.ecr_uri = ecr_repository_uri
         service_aws_entry.save()
@@ -214,12 +213,12 @@ def create_ecr_and_push_image(service_name, region):
         #    ecr_uri=ecr_repository_uri,
         # 다른 필드가 있다면 필요한대로 추가하세요
     #    )
-        print(f"{service_name}에 대한 데이터베이스 엔트리가 생성 또는 업데이트되었습니다.")
+        return ecr_repository_uri
     except Exception as e:
         print(f"Docker 이미지를 ECR에 푸시하는 중 오류 발생: {e}")
 
 
-def create_ecr_and_push(request):
+def create_ecr_and_push(request, service_name):
     if request.method == 'POST':
         service_name = request.POST.get('service_name')
         region = request.POST.get('region')
@@ -262,3 +261,4 @@ def delete_hosting_main(request):
     #Helm(service_name) 함수
     #ECR(service_name) 함수
     #S3(servie_name) 함수
+    
