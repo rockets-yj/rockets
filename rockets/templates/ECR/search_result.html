@@ -13,8 +13,8 @@
 <ul>
     {% for repository in filtered_repositories %}
     <li>
-        {{ repository.repositoryUri }}<button type="button" class="delete-btn" data-repo-name="{{ repository.repositoryName }}" data-repo-uri=" {{ repository.repositoryUri }} ">Delete</button>
-
+        {{ repository.repositoryUri }}
+        <button type="button" class="delete-btn" data-repo-name="{{ repository.repositoryName }}" data-repo-uri="{{ repository.repositoryUri }}">Delete</button>
     </li>
     {% endfor %}
 </ul>

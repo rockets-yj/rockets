@@ -1,0 +1,65 @@
+<!-- delete_ecr.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Delete ECR Repository</title>
+</head>
+
+<body>
+    <h2>Delete ECR Repository</h2>
+    <form id="deleteForm">
+        {% csrf_token %}
+        <label for="repoName">Repository Name:</label>
+        <input type="text" id="repoName" name="repo_name" required>
+        <br>
+        <button type="button" onclick="deleteRepository()">Delete Repository</button>
+    </form>
+
+</body>
+<script>
+    function deleteRepository() {
+        var repoName = document.getElementById('repoName').value;
+
+        fetch('/ecr/delete_ecr/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    repo_name: repoName
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'success') {
+                    alert('삭제 성공');
+                } else {
+                    alert('삭제에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('서버 오류로 삭제에 실패했습니다.');
+            });
+    }
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+</html>

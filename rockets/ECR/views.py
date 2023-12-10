@@ -1,5 +1,4 @@
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from ecr_functions import *
 from rocket_admin.models import *
@@ -14,9 +13,8 @@ import subprocess
 import re
 import shlex
 from rocket_admin.models import Serviceaws, Userinfo
-
-
-
+from ecr_functions.ecr_delete import delete_ecr
+#from ecr_functions.search_ecr import search_ecr_view
 
 
 def create_ecr(request):
@@ -48,10 +46,11 @@ def delete_ecr(repository_name):
         return response
     except Exception as e:
         print(f'삭제에 실패했습니다: {e}')
-        return {'error_message': str(e)}
+        return JsonResponse({'message': 'error', 'error_detail': str(e)}, status=500)
 
 def create_ecr_view(request):
     return render(request, 'ECR/create_ecr.html')
+
 
 @csrf_exempt
 def delete_repository(request):
@@ -69,6 +68,7 @@ def delete_repository(request):
     else:
         return JsonResponse({'message': 'error'})
 
+
 def search_ecr_view(request):
     return render(request, 'ECR/search_ecr.html')
 
@@ -81,14 +81,13 @@ def search_result(request):
         return render(request, 'ECR/search_result.html', {'filtered_repositories': repositories, 'query': query})
     except Exception as e:
         return render(request, 'ECR/search_result.html', {'error_message': str(e), 'query': query})
-    
 
 
 def push_to_ecr(request):
-    if request.method == 'GET':
-        service_name = request.GET.get('service_name')
-        region = request.GET.get('region')
-        search_keyword = request.GET.get('search_keyword')
+    if request.method == 'POST':
+        service_name = request.POST.get('service_name')
+        region = request.POST.get('region')
+        search_keyword = request.POST.get('search_keyword')
 
         if not service_name or not region or not search_keyword:
             return JsonResponse({'message': '서비스 이름, 리전, 검색어를 모두 입력하세요.'})
@@ -240,6 +239,38 @@ def create_ecr_and_push(request, service_name):
     else:
         return render(request, 'ECR/create_ecr_and_push.html')
     
+
+def delete_ecr_view(request):
+    if request.method == 'POST':
+        repository_name = request.POST.get('repository_name')
+        response = delete_ecr(repository_name)
+        
+        return JsonResponse({'result': 'success', 'message': '삭제 성공' if not isinstance(response, Exception) else f'삭제 실패: {str(response)}'})
+
+    return render(request, 'ECR/delete_ecr.html')
+
+
+# def find_duplicate_keys(data):
+#     seen_keys = set()
+#     duplicate_keys = set()
+
+#     for key in data:
+#         if key in seen_keys:
+#             duplicate_keys.add(key)
+#         else:
+#             seen_keys.add(key)
+
+#     if duplicate_keys:
+#         print(f'Duplicate keys found: {duplicate_keys}')
+#     else:
+#         print('No duplicate keys found')
+
+# # 예시 데이터
+# json_data = {'name': 'John', 'age': 25, 'name': 'Doe', 'city': 'New York', 'city': 'Los Angeles'}
+
+# # 중복된 키 찾기
+# find_duplicate_keys(json_data)
+
 
 
 def create_hosting_main(request):
