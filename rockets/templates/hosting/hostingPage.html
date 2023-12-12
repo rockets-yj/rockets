@@ -19,6 +19,17 @@
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+      @font-face {
+        font-family: '경기천년제목';
+        src: url('/static/assets/font/경기천년제목_Bold.ttf') format('truetype');
+      }
+
+      @keyframes blink-effect {
+        50% {
+          opacity: 0;
+        }
+      }
+      
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -102,48 +113,58 @@
         align-items: center;
       }
 
-      .div-modal{
-        width: 100vw !important;
-        padding: 0px !important;
+      #loadingModal {
+        height: 100vh;
+        width: 500px;
+        background-position: center; /* 배경 이미지를 가운데 정렬 */
         display: flex;
         flex-direction: column;
-        align-itens: center;
       }
 
-      #loadingModal {
-        background-color: none;
-        width: 50vw;
-        height: 100vh;
-        left: 50%;
-        transform: translateX(50%);
-      }
-
-      
-      #loading-bar {
-        width: 0;
-        transition: width 10s ease; 
-        height: 25px;  /* 로딩 바의 높이 설정 */
-        background-color: darkred ; /* 로딩 바의 배경색 설정 */
-        border-radius: 10px;
-        left: 0; /* 위치를 초기화합니다. */
-        transform: none; /* 변환을 초기화합니다. */
-        margin-top:50px;
-      }
-
+  
       .rocketgif {
         width: 500px;
         height: auto;
-        margin-bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+        margin: 10px auto; /* 이미지를 가로로 가운데 정렬 */
+        display: block;
+        border-radius: 30px;
+      }
+      
+      #loading-bar {
+        width: 0;
+        transition: width 570s ease; 
+        height: 25px;  /* 로딩 바의 높이 설정 */
+        background-color: darkblue ; /* 로딩 바의 배경색 설정 */
+        border: white;
+        border-radius: 10px;
+        left: 0; /* 위치를 초기화합니다. */
+        transform: none; /* 변환을 초기화합니다. */
+      }
 
       .status-message {
         font-size: 2em;
         font-weight: bold;
-        color: darkred;
+        color: darkblue;
         text-align: center;
         margin-top: 20px;
+      }
+
+      #modal-container{
+        height: 100vh;
+        width: 100vw;
+        background-position: center; /* 배경 이미지를 가운데 정렬 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* 수직 가운데 정렬 */
+        align-items: center; /* 수평 가운데 정렬 */
+        margin-top: 200px;
+      }
+
+
+
+      
+      .blink {
+        animation: blink-effect 2s step-end infinite;
       }
 
       
@@ -231,7 +252,7 @@
   </symbol>
 </svg>
 
-<header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
+<header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark" id="header">
   <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">Rockets</a>
 
   <div id="navbarSearch" class="navbar-search w-100 collapse">
@@ -260,63 +281,8 @@
                 <b>Hosting</b>
               </a>
             </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#cart"/></svg>
-                Products
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#people"/></svg>
-                Customers
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#graph-up"/></svg>
-                Reports
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#puzzle"/></svg>
-                Integrations
-              </a>
-            </li> -->
           </ul>
 
-          <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
-            <span>Saved reports</span>
-          </h6>
-          <ul class="nav flex-column mb-auto">
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
-                Current month
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
-                Last quarter
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
-                Social engagement
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
-                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
-                Year-end sale
-              </a>
-            </li>
-          </ul> -->
-
-          <!-- <hr class="my-3"> -->
 
           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
             <span>Users</span>
@@ -417,23 +383,13 @@
             </div>
 
             <div class="col-12">
+              <label for="servicecName" class="form-label"><b>Port (0-6535)</b></label>
+              <input type="text" class="form-control" name="portNumber" id="portNumber" placeholder="0 - 6535" maxlength="4" required>
+            </div>
+
+            <div class="col-12">
               <label for="country" class="form-label"><b>DataBase</b></label>
               <br>
-              <!-- <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                
-                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db1" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio-db1" style="width: 90px;">MySQL</label>
-                
-              
-                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db2" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio-db2" style="width: 90px;">MariaDB</label>
-              
-                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db3" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio-db3" style="width: 90px;">Redis</label>
-
-                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db4" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio-db4" style="width: 90px;">External</label>
-              </div> -->
               <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 
                 <input type="radio" class="btn-check" name="dbNo" value=1 id="btnradio-db1" autocomplete="off">
@@ -453,11 +409,17 @@
             
           </div>
 
+          <script> <!--추후 삭제 예정, required로 적용할 예정-->
+            {% if error %}
+              alert("{{ error }}");
+            {% endif %}
+          </script>
+
           <hr class="my-4">
 
           <div class="mb-3">
             <label for="formFile" class="form-label"><b>Project(.zip)</b></label>
-            <input class="form-control" type="file" id="formFile">
+            <input class="form-control" type="file" id="formFile" name="projectFile">
           </div>
           <hr class="my-4">
 
@@ -474,10 +436,12 @@
   </div>
 
   {% comment %} 로딩바모달 {% endcomment %}
-  <div class="progress" id="loadingModal" style="display:none">
-    <img class="d-block mx-auto mb-4 my-logo rocketgif" src="{% static '/assets/image/rockets_blue.gif' %}" alt="" width="500px">
-    <div id="loading-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
-    <div class="status-message" id="status-message"></div>
+  <div id="modal-container">
+    <div class="progress" id="loadingModal" style="display:none">
+      <img class="d-block mx-auto mb-4 my-logo rocketgif" src="{% static '/assets/image/rockets_blue.gif' %}" alt="" width="500px"> 
+      <div id="loading-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="status-message" id="status-message"></div>
+    </div>
   </div>
 
 </div>
@@ -490,56 +454,71 @@
         console.log('호스팅 버튼 클릭');
     
         document.getElementById('hostingPage').style.display = 'none';
+        document.getElementById('header').style.display = 'none';
 
         loadingModal = document.getElementById('loadingModal');
         loadingModal.style.backgroundColor = "white";
-        loadingModal.style.height = "auto";
         loadingModal.style.display = 'flex';
-        loadingModal.style.flexDirection = 'column';
-        loadingModal.style.alignItmes = 'center';
-        loadingModal.style.marginTop = '100px';
+        loadingModal.classList.add('loadingModal');
         
         // 초기 width 값 및 간격 설정
         let width = 0;
         simulateLoading();
       }); 
 
-      // 로딩 바 시뮬레이션
-      function simulateLoading() {
-        let width = 0;
-        let intervals = [
-            { duration: 2_000, interval: 100, message: '파일 업로드 중' },       // 2초
-            { duration: 2_000, interval: 100, message: '도커 이미지 업로드 중' }, // 2초
-            { duration: 3_000, interval: 100, message: '노드 생성 중' },        // 3초
-            { duration: 2_000, interval: 100, message: 'CloudFront 생성 중' },  // 2초
-            { duration: 1_000, interval: 100, message: '도메인 할당 중' }        // 1초
-        ];
-    
-        let currentInterval = 0;
-        let messageElement = document.getElementById('status-message');
-        messageElement.innerHTML = intervals[currentInterval].message;
-    
-        function update() {
-            if (width >= 100) {
-                // 여기에서 추가로 필요한 처리 수행
-                clearInterval(intervalId);
-                return;
-            }
-    
-            width += 10;
-            updateLoadingBar(width);
-    
-            if (width >= intervals[currentInterval].duration / 10 * 100) {
-                currentInterval++;
-                if (currentInterval < intervals.length) {
-                    messageElement.innerHTML = intervals[currentInterval].message;
-                }
-            }
-        }
-    
-        let intervalId = setInterval(update, intervals[currentInterval].interval);
+    // 로딩 바 시뮬레이션
+    function simulateLoading() {
+      // 초기화
+      let width = 0;
+      let intervals = [
+          { duration: 30, interval: 100, message: '파일 업로드 중...' },
+          { duration: 30, interval: 100, message: '도커 이미지 업로드 중...' },
+          { duration: 180, interval: 100, message: '노드 생성 중...' },
+          { duration: 180, interval: 100, message: 'CloudFront 생성 중...' },
+          { duration: 30, interval: 100, message: '도메인 할당 중...' }
+      ];
+
+      
+      // 초기 메시지 설정
+      let currentInterval = 0;
+
+      
+      function update() {
+        // 로딩 바 업데이트
+        width += 10;
+        updateLoadingBar(width);
+        showMessageWithDelay(intervals);
+
+          // 로딩이 완료되면 clearInterval을 통해 간격을 정지
+          if (width >= 100) {
+              clearInterval(intervalId);
+              // 추가로 필요한 처리 수행
+              return;
+          }
+
+      }
+
+      // 초기 간격으로 setInterval 설정
+      let intervalId = setInterval(update, intervals[0].interval);
     }
-    
+
+    function showMessageWithDelay(intervalData) {
+      let cumulativeDelay = 0;
+      let messageElement = document.getElementById('status-message');
+  
+      for (const data of intervalData) {
+          setTimeout(() => {
+            messageElement.innerHTML = data.message;
+            messageElement.style.fontFamily = '경기천년제목';
+            //messageElement.classList.add('blink');
+            //console.log(data.message);
+            //console.log(`${data.message} : duration ${data.duration}초`);
+          }, cumulativeDelay);
+  
+          cumulativeDelay += data.duration * 1000; // 초 단위로 변환
+      }
+    }
+
     function updateLoadingBar(width) {
         $('#loading-bar').css('width', width + '%');
     }

@@ -1,0 +1,28 @@
+ingress:
+  name: "iloveyunjii10"
+  namespace: "iloveyunjii10"
+
+service:
+  name: "iloveyunjii10"     
+
+app:
+  name: "iloveyunjii10"            
+
+container:
+  name: "iloveyunjii10"               
+  image: 610264642862.dkr.ecr.ap-northeast-2.amazonaws.com/iloveyunjii10:latest             
+  port: None                   
+
+node:
+  name: "iloveyunjii10"         
+  type: t3.medium        
+  dc: 2                  
+  size: 20               
+
+namespace:
+  name: "iloveyunjii10"  
+
+deployment:
+  name: "iloveyunjii10"
+  namespace: "iloveyunjii10"
+  rep: 3
