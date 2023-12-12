@@ -324,6 +324,8 @@ def all_in_one(request):
         print(region)  
         
         _service.ecr_uri = create_ecr_and_push_image(_service_name, region.region_code)
+        if _service.ecr_uri == False :
+            return render (request,'hosting/hostingResult.html', {'result': f' 에러: Dockefile 에러'})
         _service.save()
         
         try_helm.delete_folder(_service_name)

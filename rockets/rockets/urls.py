@@ -15,7 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+#import settings
+
+
 
 
 urlpatterns = [
@@ -30,3 +33,9 @@ urlpatterns = [
     path('rocketadmin/', include('ECR.urls')),
     path('cloudfront/', include('cloudfront.urls')),
 ]
+
+
+# if settings.DEBUG == False :
+#     urlpatterns += {
+#         re_path
+#     }
