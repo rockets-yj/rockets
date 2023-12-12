@@ -260,8 +260,63 @@
                 <b>Hosting</b>
               </a>
             </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#cart"/></svg>
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#people"/></svg>
+                Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#graph-up"/></svg>
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#puzzle"/></svg>
+                Integrations
+              </a>
+            </li> -->
           </ul>
 
+          <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+            <span>Saved reports</span>
+          </h6>
+          <ul class="nav flex-column mb-auto">
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Current month
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Last quarter
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Social engagement
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <svg class="bi"><use xlink:href="#file-earmark-text"/></svg>
+                Year-end sale
+              </a>
+            </li>
+          </ul> -->
+
+          <!-- <hr class="my-3"> -->
 
           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
             <span>Users</span>
@@ -299,7 +354,7 @@
               <label for="servicecName" class="form-label"><b>Name</b></label>
               <div class="input-group has-validation">
                 <!-- <span class="input-group-text">@</span> -->
-                <input type="text" class="form-control" name="serviceName" id="serviceName" minlength="8" placeholder="Name" required oninput="validateInput()">
+                <input type="text" class="form-control" name="serviceName" id="serviceName" placeholder="Name" required>
                 <div class="invalid-feedback">
                   Service name is required.
                 </div>
@@ -362,14 +417,23 @@
             </div>
 
             <div class="col-12">
-              <label for="servicecName" class="form-label"><b>Port (0-6535)</b></label>
-              <input type="text" class="form-control" name="portNumber" id="portNumber" placeholder="0 - 6535" maxlength="4" required>
-            </div>
-
-            <div class="col-12">
               <label for="country" class="form-label"><b>DataBase</b></label>
               <br>
+              <!-- <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                
+                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db1" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio-db1" style="width: 90px;">MySQL</label>
+                
+              
+                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db2" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio-db2" style="width: 90px;">MariaDB</label>
+              
+                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db3" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio-db3" style="width: 90px;">Redis</label>
 
+                <input type="radio" class="btn-check" name="btnradio-db" id="btnradio-db4" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio-db4" style="width: 90px;">External</label>
+              </div> -->
               <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 
                 <input type="radio" class="btn-check" name="dbNo" value=1 id="btnradio-db1" autocomplete="off">
@@ -388,16 +452,12 @@
             </div>
             
           </div>
-          <script> <!--추후 삭제 예정, required로 적용할 예정-->
-            {% if error %}
-              alert("{{ error }}");
-            {% endif %}
-          </script>
+
           <hr class="my-4">
 
           <div class="mb-3">
             <label for="formFile" class="form-label"><b>Project(.zip)</b></label>
-            <input class="form-control" type="file" id="formFile" name="projectFile">
+            <input class="form-control" type="file" id="formFile">
           </div>
           <hr class="my-4">
 

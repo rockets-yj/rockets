@@ -9,4 +9,5 @@ urlpatterns = [
     path('status/serviceInfo/', views.viewServiceInfo, name='serviceInfo'),
     path('status/serviceInfo/sts', views.viewServiceInfoStatus, name='serviceInfoStatus'),
     path('logoutadmin/', cklogout, name="logoutadmin"),
+    path('serviceDelete/',views.serviceDelete , name='serviceDelete')
 ]

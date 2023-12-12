@@ -2,13 +2,15 @@ services:
   django:
     container_name: rockets
     build:
-      dockerfile: $PWD/rocketsBuilder
+      dockerfile: $PWD/dockerfile
     restart: always
     volumes:
       - $PWD/rockets/:/rockets/
       - static-data:/home/rocket/git-workspace/hwang_git/rockets/rockets/static
+    env_file:
+      - credentials.env
     command: >
-      bash -c " python3 manage.py makemigrations && python3 manage.py migrate  && gunicorn --bind 0:2340 rockets.wsgi:application"
+      bash -c " pip install django-cors-headers && python3 manage.py migrate  && gunicorn --bind 0:2340 rockets.wsgi:application"
       
 
     expose:
