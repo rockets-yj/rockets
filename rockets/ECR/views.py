@@ -14,6 +14,8 @@ import subprocess
 import re
 import shlex
 from rocket_admin.models import Serviceaws, Userinfo
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 
 
@@ -131,12 +133,15 @@ def create_ecr_and_push_image(service_name, region):
 
     # Step 2: Build Docker image
     try:
-        dockerfile_path = '/home/rocket/git-workspace/kim_git/rockets/rockets/ecr_functions/Dockerfile'
-        dockerfile_directory = '/home/rocket/git-workspace/kim_git/rockets/rockets/ecr_functions'
-        subprocess.run(['docker', 'build', '-t', f'{repository_name}-image', '-f', dockerfile_path, '.'], cwd=dockerfile_directory)
+        #dockerfile_path = '/home/rocket/git-workspace/kim_git/rockets/rockets/ecr_functions/Dockerfile'
+        fs = FileSystemStorage()
+        dockerfile_path = fs.location+f'/{service_name}/'+'Dockerfile'
+        #dockerfile_directory = '/home/rocket/git-workspace/kim_git/rockets/rockets/ecr_functions'
+        dockerfile_directory = fs.location+f'/{service_name}'
+        subprocess.run(['docker', 'build', '-t', f'{repository_name}-image', '-f', dockerfile_path, '.'], cwd=dockerfile_directory, check=True)
     except Exception as e:
         print(f"Docker 이미지 빌드 실패: {e}")
-        return
+        return False
 
     # Step 3: Tag Docker image for ECR
     # serviceaws_entry = None  # 변수를 미리 선언해줍니다.
@@ -164,7 +169,7 @@ def create_ecr_and_push_image(service_name, region):
 
     # Tag Docker image for ECR
         try:
-            subprocess.run(['docker', 'tag', f'{repository_name}-image:latest', ecr_repository_uri])
+            subprocess.run(['docker', 'tag', f'{repository_name}-image:latest', ecr_repository_uri], check=True)
         except Exception as tag_error:
             print(f"태깅 중 오류 발생: {tag_error}")
         # 여기에서 오류 처리를 수행하거나 필요한 경우 serviceaws_entry를 삭제할 수 있습니다.
@@ -172,11 +177,11 @@ def create_ecr_and_push_image(service_name, region):
     except Exception as e:
         print(f"Docker 이미지를 ECR에 태깅하는 중 오류 발생: {e}")
     # 여기에서 오류 처리를 수행하거나 필요한 경우 serviceaws_entry를 삭제할 수 있습니다.
-        return
+        return False
 
     # Step 4: Login to ECR
     try:
-        login_cmd = subprocess.run(shlex.split(f'aws ecr get-login-password --region {region}'), capture_output=True, text=True)
+        login_cmd = subprocess.run(shlex.split(f'aws ecr get-login-password --region {region}'), capture_output=True, text=True, check=True)
         login_token = login_cmd.stdout.strip()  # 토큰에서 공백을 제거합니다.
 
         # 토큰을 파일에 저장합니다.
@@ -184,18 +189,14 @@ def create_ecr_and_push_image(service_name, region):
             file.write(login_token)
 
         # 저장된 파일을 사용하여 Docker에 로그인합니다.
-        subprocess.run(['docker', 'login', '--password-stdin', '--username', 'AWS', f'https://{account_id}.dkr.ecr.{region}.amazonaws.com'], input=login_token, text=True)
+        subprocess.run(['docker', 'login', '--password-stdin', '--username', 'AWS', f'https://{account_id}.dkr.ecr.{region}.amazonaws.com'], input=login_token, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"ECR에 로그인 중 오류 발생: {e}")
-        return
+        return False
 
     # Step 5: Push Docker image to ECR
     try:
-        subprocess.run(['docker', 'push', ecr_repository_uri])        
-        
-
-        # 현재 사용자를 가져와서 'UNO' 값을 설정
-        current_user = Userinfo.objects.get(uname='name001')
+        subprocess.run(['docker', 'push', ecr_repository_uri], check=True)        
         
         # 데이터베이스 엔트리 생성 또는 업데이트
         service_aws_entry = Serviceaws.objects.get(
@@ -216,6 +217,7 @@ def create_ecr_and_push_image(service_name, region):
         return ecr_repository_uri
     except Exception as e:
         print(f"Docker 이미지를 ECR에 푸시하는 중 오류 발생: {e}")
+        return False
 
 
 def create_ecr_and_push(request, service_name):
@@ -239,26 +241,4 @@ def create_ecr_and_push(request, service_name):
             return JsonResponse(f"에러 발생: {e}")
     else:
         return render(request, 'ECR/create_ecr_and_push.html')
-    
-
-
-def create_hosting_main(request):
-    service_name=request.POST.get('service_name')
-    #upload 함수
-    #S3(servie_name) 함수
-    #ECR(service_name) 함수
-    #Helm(service_name) 함수
-    #ACM(service_name) 함수
-    #CloudFront(service_name) 함수
-    #Route53(service_name) 함수
-
-def delete_hosting_main(request):
-    service_name=request.POST.get('service_name')
-    #upload 함수
-    #Route53(service_name) 함수
-    #CloudFront(service_name) 함수
-    #ACM(service_name) 함수
-    #Helm(service_name) 함수
-    #ECR(service_name) 함수
-    #S3(servie_name) 함수
     

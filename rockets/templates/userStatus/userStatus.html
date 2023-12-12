@@ -543,6 +543,45 @@
           delbtn.type = "button";
           delbtn.className = "btn btn-outline-danger delete-btn";
           delbtn.innerText = "삭제";
+          delbtn.addEventListener('click', function () {
+            console.log( serviceId.value);
+      
+            // Confirm deletion with the user (optional)
+            const isConfirmed = confirm('정말로 삭제하시겠습니까?');
+      
+            if (isConfirmed) {
+              // Send a DELETE request to the server using Fetch API
+              fetch(`/mypage/serviceDelete/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+
+                },
+                body: JSON.stringify({serviceId: serviceId.value})
+              })
+              .then(response => {
+                if (response.ok) {
+                  // Optionally update the UI or handle success
+                  console.log('삭제 성공');
+                  return response.json(); // Parse the JSON response
+                  
+                } else {
+                  // Handle errors or show a message to the user
+                  console.error('삭제 실패');
+                }
+              })
+              .then(data => {
+                // djano 에서 받은 메세지
+                console.log(data.message)
+                location.reload();
+              })
+              .catch(error => {
+                console.error('네트워크 에러:', error);
+              });
+            }
+          });
+            
+
           td5.append(delbtn);
           
       

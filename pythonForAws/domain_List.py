@@ -1,13 +1,19 @@
 import boto3
+import os
+
+# AWS 자격 증묭을 설정합니다. 나중에 우리 웹을 도커나 쿠버네티스로 올리면 환경벼수로 가져와야 할 듯?
+
 
 MAIN_DOMAIN = 'rockets-yj.com'
 
 session = boto3.Session (
     
-    aws_access_key_id = '',
-    aws_secret_access_key= '',
-    region_name= ''
-)
+    aws_access_key_id = os.environ.get('AWS_ACCESS_KEY',''),
+    aws_secret_access_key= os.environ.get('AWS_SECRET_ACCESS_KEY',''),
+    region_name= os.environ.get('ASWS_RECGION','')
+)    
+
+
 
 client = session.client('route53')
 
