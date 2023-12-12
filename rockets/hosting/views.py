@@ -6,10 +6,12 @@ from s3_functions import *
 from datetime import datetime
 import re
 from django.http import HttpResponse
+from django.http import JsonResponse
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 import os
 import zipfile
 from django.core.files.storage import FileSystemStorage
-from django.shortcuts import get_object_or_404
 from acm import ACM
 from ecr_functions import *
 from ECR.views import *
@@ -18,6 +20,7 @@ from try_helm import *
 from cloudfront import *  
 from hosting.views import *
 import time 
+
 
 
 session = boto3.Session (
@@ -45,15 +48,15 @@ def serviceNameCheck(serviceName):
         return error_message
     #return값 error 프린트하고 hosting 페이지로 돌아가기
 
-    # 소문자로 변경하고 trim 적용 -> 그러면 processed_service_name을 아래에서 확인해야하나?
-    processed_service_name = serviceName.lower().strip()
-    print(processed_service_name)
+    # 소문자로 변경하고 trim 적용 -> 그러면 progressed_service_name을 아래에서 확인해야하나?
+    progressed_service_name = serviceName.lower().strip()
+    print(progressed_service_name)
 
     # 여기 DB service_name과 위에proceseed_service_name이 중복되는지 중복값 비교  
-    if Serviceaws.objects.filter(service_name=processed_service_name).exists():
+    if Serviceaws.objects.filter(service_name=progressed_service_name).exists():
         error_message = '이미 사용중인 서비스 이름입니다.'
         print(error_message)
-        #return render(processed_service_name, 'hosting/hostingPage.html', {'error' : '이미 사용중인 아이디 입니다.'} )
+        #return render(progressed_service_name, 'hosting/hostingPage.html', {'error' : '이미 사용중인 아이디 입니다.'} )
         return error_message
         #return값 error 프린트하고 hosting 페이지로 돌아가기
 
@@ -299,7 +302,6 @@ def userHosting(request):
     return True
 
 
-
 @csrf_exempt
 def all_in_one(request):
     _service_name = request.POST.get('serviceName')
@@ -314,7 +316,6 @@ def all_in_one(request):
         else :
             return render(request, 'hosting/hostingPage.html', { 'error' : service_check})
         
-        
         userHosting(request)
         
         _service = Serviceaws.objects.get(service_name=_service_name)
@@ -323,23 +324,39 @@ def all_in_one(request):
         region =  Region.objects.get(region_no=_region_no)   
         print(region)  
         
-        _service.ecr_uri = create_ecr_and_push_image(_service_name, region.region_code)
-        _service.save()
+        time.sleep(450)
+        # _service.ecr_uri = create_ecr_and_push_image(_service_name, region.region_code)
+        # _service.save()
         
-        try_helm.delete_folder(_service_name)
-        try_helm.create_service(_service_name, _service.ecr_uri, _service.port, _service_name)
-        try_helm.create_eks_nodegroup(_service_name, _service_name, 'eks-rockets')
-        try_helm.helm_start(_service_name)
-        time.sleep(10)                                   # 바로 LB 못 불러와서 잠시 후 불러오기 위해서
-        _service.load_balancer_name = try_helm.get_load_balancer_dns(_service_name)
-        _service.save()
-        _service.cloudfront_dns = cf_create.create_cloudfront_distribution(_service_name,_service.load_balancer_name)
-        _service.save()
-        _service.domain=addDomain(_service_name, _service.cloudfront_dns)
-        _service.save()
+        # try_helm.delete_folder(_service_name)
+        # try_helm.create_service(_service_name, _service.ecr_uri, _service.port, _service_name)
+        # try_helm.create_eks_nodegroup(_service_name, _service_name, 'eks-rockets')
+        
+        
+        # try_helm.helm_start(_service_name)
+        # time.sleep(10)                                   # 바로 LB 못 불러와서 잠시 후 불러오기 위해서
+        # _service.load_balancer_name = try_helm.get_load_balancer_dns(_service_name)
+        # _service.save()     
+        # _service.cloudfront_dns = cf_create.create_cloudfront_distribution(_service_name,_service.load_balancer_name)
+        # _service.save()
+        
+        
+        # _service.domain=addDomain(_service_name, _service.cloudfront_dns)
+        # _service.save()
+        
+        
         result = "호스팅에 성공하였습니다."
-        
         return render(request, 'hosting/hostingResult.html', {'result' : result, 'dns' : _service.domain})
-    except Exception as e :
-        return render (request,'hosting/hostingResult.html', {'result': f' 에러: {e}'})
     
+    except Exception as e :
+        # 에러 발생 시 로딩 프로세스 업데이트
+        return render (request,'hosting/hostingResult.html', {'result': f' 에러: {e}'})
+
+
+'''
+    # 파일 업로드 완료 (20초)
+    # 도커 이미지 업로드 완료 (20초)
+    # 노드 생성 완료 (4분)
+    # cloudfront 생성 완료 (2분 30초)
+    # 도메인 할당 완료 (20초)
+'''

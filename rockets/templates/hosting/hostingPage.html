@@ -3,8 +3,6 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head>
-    {% comment %} <script src="../assets/js/color-modes.js"></script> {% endcomment %}
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -38,7 +36,7 @@
       .b-example-divider {
         width: 100%;
         height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
+        background-: rgba(0, 0, 0, .1);
         border: solid rgba(0, 0, 0, .15);
         border-width: 1px 0;
         box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
@@ -103,6 +101,52 @@
         flex-direction: column;
         align-items: center;
       }
+
+      .div-modal{
+        width: 100vw !important;
+        padding: 0px !important;
+        display: flex;
+        flex-direction: column;
+        align-itens: center;
+      }
+
+      #loadingModal {
+        background-color: none;
+        width: 50vw;
+        height: 100vh;
+        left: 50%;
+        transform: translateX(50%);
+      }
+
+      
+      #loading-bar {
+        width: 0;
+        transition: width 10s ease; 
+        height: 25px;  /* 로딩 바의 높이 설정 */
+        background-color: darkred ; /* 로딩 바의 배경색 설정 */
+        border-radius: 10px;
+        left: 0; /* 위치를 초기화합니다. */
+        transform: none; /* 변환을 초기화합니다. */
+        margin-top:50px;
+      }
+
+      .rocketgif {
+        width: 500px;
+        height: auto;
+        margin-bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+      .status-message {
+        font-size: 2em;
+        font-weight: bold;
+        color: darkred;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      
     </style>
 
     
@@ -114,6 +158,8 @@
     <!-- CDN 사용 예시 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   </head>
   
   <body>
@@ -194,7 +240,7 @@
 </header>
 
 <div class="container-fluid">
-  <div class="row">
+  <div class="row" id="hostingPage">
     <div class="sidebar border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
       <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto side-nav">
@@ -246,7 +292,7 @@
             
       
       <div class="col-md-7 col-lg-8 form-div" style="width: 650px;">
-        <form class="needs-validation"  method="POST" action="{% url 'hosting' %}" enctype="multipart/form-data">
+        <form class="needs-validation"  method="POST" action="{% url 'hosting' %}" enctype="multipart/form-data" id="hostingForm">
           <div class="row g-3">
 
             <div class="col-12">
@@ -355,20 +401,92 @@
           </div>
           <hr class="my-4">
 
-          <button class="w-100 btn btn-primary btn-lg" type="submit">UPLOAD</button>
+          <button class="w-100 btn btn-primary btn-lg" type="submit" id="submitBtn">UPLOAD</button>
         </form>
       </div>
     </main>
-  
+
+    
     <footer class="my-5 pt-5 text-body-secondary text-center text-small">
       <p class="mb-1">&copy; 2023 Rockets</p>
     </footer>
-      
+    
   </div>
-</div>
-{% comment %} <script src="../assets/dist/js/bootstrap.bundle.min.js"></script> {% endcomment %}
-{% comment %} <script src="/rockets/static/assets/js/userStatus.js"></script> {% endcomment %}
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script>
-    {% comment %} <script src="dashboard.js"></script></body> {% endcomment %}
+  {% comment %} 로딩바모달 {% endcomment %}
+  <div class="progress" id="loadingModal" style="display:none">
+    <img class="d-block mx-auto mb-4 my-logo rocketgif" src="{% static '/assets/image/rockets_blue.gif' %}" alt="" width="500px">
+    <div id="loading-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="status-message" id="status-message"></div>
+  </div>
+
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script>
+
+  <script> 
+
+      document.getElementById('submitBtn').addEventListener('click', function() {
+        console.log('호스팅 버튼 클릭');
+    
+        document.getElementById('hostingPage').style.display = 'none';
+
+        loadingModal = document.getElementById('loadingModal');
+        loadingModal.style.backgroundColor = "white";
+        loadingModal.style.height = "auto";
+        loadingModal.style.display = 'flex';
+        loadingModal.style.flexDirection = 'column';
+        loadingModal.style.alignItmes = 'center';
+        loadingModal.style.marginTop = '100px';
+        
+        // 초기 width 값 및 간격 설정
+        let width = 0;
+        simulateLoading();
+      }); 
+
+      // 로딩 바 시뮬레이션
+      function simulateLoading() {
+        let width = 0;
+        let intervals = [
+            { duration: 2_000, interval: 100, message: '파일 업로드 중' },       // 2초
+            { duration: 2_000, interval: 100, message: '도커 이미지 업로드 중' }, // 2초
+            { duration: 3_000, interval: 100, message: '노드 생성 중' },        // 3초
+            { duration: 2_000, interval: 100, message: 'CloudFront 생성 중' },  // 2초
+            { duration: 1_000, interval: 100, message: '도메인 할당 중' }        // 1초
+        ];
+    
+        let currentInterval = 0;
+        let messageElement = document.getElementById('status-message');
+        messageElement.innerHTML = intervals[currentInterval].message;
+    
+        function update() {
+            if (width >= 100) {
+                // 여기에서 추가로 필요한 처리 수행
+                clearInterval(intervalId);
+                return;
+            }
+    
+            width += 10;
+            updateLoadingBar(width);
+    
+            if (width >= intervals[currentInterval].duration / 10 * 100) {
+                currentInterval++;
+                if (currentInterval < intervals.length) {
+                    messageElement.innerHTML = intervals[currentInterval].message;
+                }
+            }
+        }
+    
+        let intervalId = setInterval(update, intervals[currentInterval].interval);
+    }
+    
+    function updateLoadingBar(width) {
+        $('#loading-bar').css('width', width + '%');
+    }
+    
+    
+    
+
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </html>
