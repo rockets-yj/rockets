@@ -89,6 +89,15 @@ def delete_eks_nodegroup(path, service_name, cluster):                          
 
     except subprocess.CalledProcessError as e:
         print(f"Nodegroup 삭제 명령어 실행 중 오류 발생: {e}")
+        
+def delete_real_eks_nodegroup(service_name, cluster='eks-rockets'):                                            # nodegroup 생성 명령어 실행
+    command = f"eksctl delete nodegroup {service_name} --cluster={cluster}"
+    
+    try:
+        subprocess.run(command, shell=True, check=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Nodegroup 삭제 명령어 실행 중 오류 발생: {e}")
 
 
 def wait_for_nodegroup_deletion(cluster, service_name):                                        # nodegroup 상태 확인 후 있으면 삭제 후 생성, 없으면 생성
@@ -155,6 +164,15 @@ def helm_delete(service_name):
         delete_namespace(service_name)
         subprocess.run(command, shell=True, check=True)
         helm_start(service_name)
+
+    except subprocess.CalledProcessError as e:
+        print(f"helm 삭제 중 오류 발생: {e}")
+        delete_folder(service_name)
+        
+def helm_real_delete(service_name):
+    command = f"helm uninstall {service_name}"
+    try:
+        subprocess.run(command, shell=True, check=True)
 
     except subprocess.CalledProcessError as e:
         print(f"helm 삭제 중 오류 발생: {e}")

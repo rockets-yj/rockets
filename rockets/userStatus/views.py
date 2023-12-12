@@ -10,6 +10,7 @@ import boto3
 from django.http import HttpResponse
 from rocket_admin.models import *
 import os
+from try_helm import *
 
 # Create your views here.
 # 사용자 서비스 상태 조회 페이지로 이동
@@ -313,10 +314,14 @@ def serviceDelete(request):
     delete_domain(user_data.service_name, user_data.cloudfront_dns)
     delete_s3_bucket(user_data.service_name+MAIN_DOMAIN)
     #delete_cloudFront('d23wsehoeia6bo.cloudfront.net')
-    delete_ecr(user_data.service_name)
+    delete_ecr(user_data.service_name) 
+    try_helm.delete_real_eks_nodegroup(user_data.service_name, 'eks-rockets')
+    try_helm.helm_real_delete(user_data.service_name)
     #delete_s3_bucket(user_data.service_name+MAIN_DOMAIN)
     # for i in range (5,10):
     #     delete_s3_bucket(f'iloverocketdan{i}'+MAIN_DOMAIN)
+    #for i in range (33,39):
+    #user_data = Serviceaws.objects.get(service_name='regiontest9')
     
     
     user_data.delete()
