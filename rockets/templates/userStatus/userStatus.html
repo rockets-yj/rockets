@@ -395,7 +395,6 @@
     {% endfor %}
   ]
 
-  console.log(svcList)
 
   // optimize: 서비스 조회 기능
 
@@ -431,41 +430,7 @@
           serviceId.type = "hidden";
           serviceId.className = "serviceListId-row";
           serviceId.value = svcList[i].service_no;
-      
-      
-      
-          // optimize: 서비스 상태 상세 조회 (클릭할때)
-          tr.addEventListener('click', () => {
-      
-              const serviceListId = document.getElementsByClassName('serviceListId-row');
-              // console.log(serviceListId[i].value);
-      
-              fetch('/mypage/status/serviceInfo/', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({serviceListId : serviceListId[i].value})
-          
-              })
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error('네트워크 응답이 올바르지 않습니다.');
-                  }
-                  return response.json();
-              })
-              .then( data => {
-                  const serviceinfo = data.serviceInfo[0];
-                  const serviceStatus = data.serviceInfo[1];
-                  // console.log("serviceinfo:", serviceinfo);
-                  // console.log("serviceStatus:", serviceStatus);
-                  serviceInfo(serviceinfo, serviceStatus);
-                  // serviceInfo 데이터를 여기에서 처리하세요
-              })
-              .catch(error => {
-                  console.error('serviceInfo 요청 중 오류 발생:', error.message);
-              });
-          });
+          //console.log("serviceId: " + serviceId.value)
       
       
           const td1 = document.createElement('td');
@@ -479,23 +444,25 @@
           const td3 = document.createElement('td');
           var svcName = svcList[i].service_name;
           td3.innerText = svcName; 
+          //console.log("svcName: " + svcName);
       
       
-          // todo: 서비스 생성 부분 나중에 처리하기
           const td4 = document.createElement('td');
           td4.innerText = ""; 
           td4.className = "service-status";
           td4.style.width = "250px";
 
-          //fixme:
           const svcStatus= document.getElementsByClassName('service-status');
           // console.log(serviceListId[i].value);
 
           fetch('/mypage/status/serviceInfo/sts', {
-              method: 'GET',
+              method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
               },
+              body: JSON.stringify({
+                'serviceName': svcName
+              })
           })
           .then(response => {
               if (!response.ok) {
@@ -504,30 +471,18 @@
               return response.json();
           })
           .then( data => {
-              const instanceStatus = data.instance_status;
-              console.log("sts:", instanceStatus);
+              const instanceStatus = data.overallStatus;
+              // console.log("sts:", instanceStatus);
               // td4.innerText = instanceStatus;
-              let sts =[]
-              let stsText = [];
-              let stsFontColor = [];
-              
-              sts = ["running", "terminated", "stopped", "stopping"];
-              stsText = ["Running", "Terminated", "Stopped", "Stopping"];
-              stsFontColor = ["green", "red", "orange", "orange"];
 
-              // console.log(sts[1]);
-
-              for(let i=0; i<sts.length; i++){
-                  if(instanceStatus == sts[i]) {
-                      console.log(stsText[i]);
-                      td4.innerText = stsText[i];
-                      td4.style.color = stsFontColor[i];
-                      td4.style.fontWeight = "bold";
-                  } else if(instanceStatus == "underlined" || instanceStatus.includes('Status')){
-                      td4.innerText = "Terminated";
-                      td4.style.color = "red";
-                      td4.style.fontWeight = "bold";
-                  }
+              if(instanceStatus == "running") {
+                td4.innerText = "Running";
+                td4.style.color = "green";
+                td4.style.fontWeight = "bold";
+              } else {
+                td4.innerText = "Terminated";
+                td4.style.color = "red";
+                td4.style.fontWeight = "bold";
               }
 
           })
@@ -587,6 +542,46 @@
       
           tr.append(td1, td2, td3, td4, td5, serviceId);
           tbody.append(tr);
+
+
+          // optimize: 서비스 상태 상세 조회 (클릭할때)
+          tr.addEventListener('click', () => {
+
+            const serviceId = document.createElement('input');
+            serviceId.type = "hidden";
+            serviceId.className = "serviceListId-row";
+            serviceId.value = svcList[i].service_no;
+            //console.log("serviceId: " + serviceId.value)
+
+          const serviceListId = document.getElementsByClassName('serviceListId-row');
+          // console.log(serviceListId[i].value);
+  
+          fetch('/mypage/status/serviceInfo/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({serviceListId : serviceListId[i].value})
+      
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('네트워크 응답이 올바르지 않습니다.');
+              }
+              return response.json();
+          })
+          .then( data => {
+              const serviceinfo = data.serviceInfo[0];
+              const serviceStatus = data.serviceInfo[1];
+              // console.log("serviceinfo:", serviceinfo);
+              // console.log("serviceStatus:", serviceStatus);
+              serviceInfo(serviceinfo, serviceStatus);
+              // serviceInfo 데이터를 여기에서 처리하세요
+          })
+          .catch(error => {
+              console.error('serviceInfo 요청 중 오류 발생:', error.message);
+          });
+      });
       
       }
   }
@@ -630,48 +625,16 @@
 
       const td22 = document.createElement('td');
       
-      let sts =[]
-      let stsText = [];
-      let stsFontColor = [];
 
-      sts = ["running", "terminated", "stopped", "stopping"];
-      stsText = ["Running", "Terminated", "Stopped", "Stopping"];
-      stsFontColor = ["green", "red", "orange", "orange"];
-
-      // console.log(sts[1]);
-
-      for(let i=0; i<sts.length; i++){
-          if(serviceStatus.toLowerCase() == sts[i]) {
-              td22.innerText = stsText[i];
-              td22.style.color = stsFontColor[i];
-              td22.style.fontWeight = "bold";
-          } else if(serviceStatus == "underlined" || serviceStatus.includes('Status')){
-              td22.innerText = "Terminated";
-              td22.style.color = "red";
-              td22.style.fontWeight = "bold";
-          }
+      if(serviceStatus == "running") {
+        td22.innerText = "Running";
+        td22.style.color = "green";
+        td22.style.fontWeight = "bold";
+      } else {
+        td22.innerText = "Terminated";
+        td22.style.color = "red";
+        td22.style.fontWeight = "bold";
       }
-
-
-      // if(serviceStatus.toLowerCase()  == "running") {
-      //     td22.innerText = "Running";
-      //     td22.style.color = "green";
-      //     td22.style.fontWeight = "bold";
-      // } else if (serviceStatus.toLowerCase()  == "terminated") {
-      //     td22.innerText = "Terminated";
-      //     td22.style.color = "red";
-      //     td22.style.fontWeight = "bold";
-      // } else if (serviceStatus.toLowerCase()  == "stopped") {
-      //     td22.innerText = "Stopped";
-      //     td22.style.color = "orange";
-      //     td22.style.fontWeight = "bold";
-      // } else if (serviceStatus.toLowerCase()  == "stopping"){
-      //     td22.innerText = "Stopping";
-      //     td22.style.color = "orange";
-      //     td22.style.fontWeight = "bold";
-      // }
-      
-      // td22.innerText = serviceStatus;  //fixme: 상태 정보 추후 수정하기
 
       tr2.append(td21, td22);
 
@@ -742,7 +705,7 @@
       
       const td52 = document.createElement('td');
       // td52.innerText = serviceInfo.load_balancer_address;
-      td52.innerText = serviceInfo.s3_arn !== undefined ? serviceInfo.s3_arn : '';
+      td52.innerText = serviceInfo.load_balancer_address !== undefined ? serviceInfo.load_balancer_address : '';
   
 
       tr5.append(td51, td52);
@@ -788,9 +751,7 @@
       td81.classList.add("serviceInfoThead");
 
       const td82 = document.createElement('td');
-      // td82.innerText = serviceInfo.ecr_uri;
-      td82.innerText = serviceInfo.ecr_uri !== undefined ? serviceInfo.ecr_uri : '';
-
+      td82.innerText = serviceInfo.ecr_uri !== undefined ? serviceInfo.ecr_uri  : '';
       tr8.append(td81, td82);
 
 
@@ -801,10 +762,9 @@
       const td91 = document.createElement('td');
       td91.innerText = "S3 ARN";
       td91.classList.add("serviceInfoThead");
-      td82.innerText = serviceInfo.s3_arn !== undefined ? serviceInfo.s3_arn  : '';
-
+      
       const td92 = document.createElement('td');
-      td92.innerText = serviceInfo.s3_arn;
+      td92.innerText = serviceInfo.s3_arn !== undefined ? serviceInfo.s3_arn  : '';
 
       tr9.append(td91, td92);
 
