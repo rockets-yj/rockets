@@ -182,7 +182,7 @@ def helm_real_delete(service_name):
 
 
 def helm_start(service_name):                                          # helm repo가 잘 생성되면 폴더 삭제 
-    command = f"helm install {service_name} /home/rocket/git-workspace/hwang_git/rockets/rockets/{service_name}/"
+    command = f"helm install {service_name} /home/rocket/git-workspace/leegit/rockets/rockets/{service_name}/"
     try:
         subprocess.run(command, shell=True, check=True)
         delete_folder(service_name)

@@ -91,7 +91,7 @@ def userHosting(request):
         if nameCheck == 1:
             pass
         else:
-            return render(request, 'hosting/hostingResult.html', {'result' : 사용중인 네임입니다.})
+            return render(request, 'hosting/hostingResult.html', {'result' : "사용중인 네임입니다."})
 
         # 해당하는 regionno에 해당하는 값을 가져옴 (한 행을 다 가져옴)
         userData = Userinfo.objects.get(uno=userNo)
