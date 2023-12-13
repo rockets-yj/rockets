@@ -18,6 +18,9 @@ from try_helm import *
 from cloudfront import *  
 from hosting.views import *
 import time 
+import shutil
+from django.conf import settings
+
 
 
 session = boto3.Session (
@@ -215,8 +218,6 @@ def create_s3(_serviceName, _extracted_file):
 # 호스팅 정보 삽입
 @csrf_exempt
 def userHosting(request):
-
-
     if request.method == 'POST' :
         # TODO
         # 1. 사용자가 입력한 데이터 저장하기
@@ -237,10 +238,6 @@ def userHosting(request):
         userNo = request.session.get('UNO')
         # userNo = 1
         
-        #정규식, lower, trim 써서 정규식에 맞는지 한번 더 확인
-
-
-
 
         userData = Userinfo.objects.get(uno=userNo)
         regionData = Region.objects.get(region_no=_regionNo)
@@ -299,6 +296,31 @@ def userHosting(request):
     return True
 
 
+# 미디어 파일/디렉토리 삭제
+def delete_local_media_file(file_path):
+    # 로컬 media 경로 설정
+    media_root = settings.MEDIA_ROOT
+
+    # 파일 또는 디렉토리의 절대 경로 생성
+    absolute_path = os.path.join(media_root, file_path)
+
+    try:
+        # 파일 또는 디렉토리 삭제
+        if os.path.isfile(absolute_path):
+            os.remove(absolute_path)
+            print(f'파일이 삭제되었습니다: {absolute_path}')
+        elif os.path.isdir(absolute_path):
+            shutil.rmtree(absolute_path)
+            print(f'디렉토리가 삭제되었습니다: {absolute_path}')
+        else:
+            print(f'파일 또는 디렉토리를 찾을 수 없습니다: {absolute_path}')
+        return True
+    except Exception as e:
+        print(f'파일 또는 디렉토리 삭제 중 오류 발생: {e}')
+        return False
+
+
+
 
 @csrf_exempt
 def all_in_one(request):
@@ -327,6 +349,17 @@ def all_in_one(request):
         if _service.ecr_uri == False :
             return render (request,'hosting/hostingResult.html', {'result': f' 에러: Dockefile 에러'})
         _service.save()
+        
+        
+        # ecr 생성 후, 미디어 삭제
+        # 삭제할 파일 또는 디렉토리의 상대 경로 (예: 'uploads/example.txt' 또는 'uploads/example_directory')
+        # 디렉토리를 삭제할 때는 파일확장자명 없이 예) test231204 이렇게 하면 된다.
+        file_to_delete = _service_name
+        zip_to_delete = _service_name + "_zip"
+
+        # 로컬 media 폴더에서 파일 또는 디렉토리 삭제
+        delete_local_media_file(file_to_delete)
+        delete_local_media_file(zip_to_delete)
         
         try_helm.delete_folder(_service_name)
         try_helm.create_service(_service_name, _service.ecr_uri, _service.port, _service_name)
