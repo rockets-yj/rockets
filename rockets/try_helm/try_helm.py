@@ -98,6 +98,7 @@ def delete_real_eks_nodegroup(service_name, cluster='eks-rockets'):             
 
     except subprocess.CalledProcessError as e:
         print(f"Nodegroup 삭제 명령어 실행 중 오류 발생: {e}")
+        return False
 
 
 def wait_for_nodegroup_deletion(cluster, service_name):                                        # nodegroup 상태 확인 후 있으면 삭제 후 생성, 없으면 생성
@@ -177,6 +178,7 @@ def helm_real_delete(service_name):
     except subprocess.CalledProcessError as e:
         print(f"helm 삭제 중 오류 발생: {e}")
         delete_folder(service_name)
+        return False
 
 
 def helm_start(service_name):                                          # helm repo가 잘 생성되면 폴더 삭제 

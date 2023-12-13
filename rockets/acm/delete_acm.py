@@ -39,7 +39,7 @@ def delete_acm(service_name):
         return response
     except Exception as e:
         print(f"Error: {e}")
-        return None
+        return False
     
 
 if __name__ == "__main__":
