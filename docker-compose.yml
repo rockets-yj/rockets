@@ -1,23 +1,5 @@
 services:
-  django:
-    container_name: rockets
-    build:
-      dockerfile: $PWD/dockerfile
-    restart: always
-    volumes:
-      - $PWD/rockets/:/rockets/
-      - static-data:/home/rocket/git-workspace/hwang_git/rockets/rockets/static
-    env_file:
-      - credentials.env
-    command: >
-      bash -c " pip install django-cors-headers && python3 manage.py migrate  && gunicorn --bind 0:2340 rockets.wsgi:application"
-      
-
-    expose:
-      - 2340
-    networks:
-      - frontnet
-
+  
   nginx: 
     container_name: rockets_server
     image: nginx
@@ -26,16 +8,3 @@ services:
     volumes:
       - /home/rocket/git-workspace/hwang_git/rockets/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
       - /home/rocket/git-workspace/hwang_git/rockets/rockets/static/:/static
-    depends_on:
-      - django
-    networks:
-      - frontnet
-
-
-networks:
-  frontnet: 
-    driver: bridge
-
-volumes:
-  db-data:
-  static-data:

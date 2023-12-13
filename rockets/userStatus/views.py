@@ -10,6 +10,8 @@ import boto3
 from django.http import HttpResponse
 from rocket_admin.models import *
 import os
+from try_helm import *
+from acm import delete_acm
 
 # Create your views here.
 # 사용자 서비스 상태 조회 페이지로 이동
@@ -182,27 +184,91 @@ def delete_domain(service_name, cloud_front):
 
     # 로드밸런서의 주소
 
+    try:
+        response = client.change_resource_record_sets(
+            HostedZoneId = hosted_zone_id,
+            ChangeBatch={
+                'Changes': [
+                    {
+                        'Action': 'DELETE',
+                        'ResourceRecordSet': {
+                            'Name': f'www.{service_name}{MAIN_DOMAIN}', # 원하는 도메인 이름
+                            'Type': 'CNAME', # ipv4 주소는 A, dns 는 CNAME ,
+                            'TTL': 300,
+                            'ResourceRecords': [
+                                {
+                                    'Value': cloud_front
+                                },
+                            ],
+                        }
+                    },
+                ]
+            }
+        )
+    except Exception as e:
+        print(f"{service_name} domain delete fail")
+        return False
 
-    response = client.change_resource_record_sets(
-        HostedZoneId = hosted_zone_id,
-        ChangeBatch={
-            'Changes': [
-                {
-                    'Action': 'DELETE',
-                    'ResourceRecordSet': {
-                        'Name': f'www.{service_name}{MAIN_DOMAIN}', # 원하는 도메인 이름
-                        'Type': 'CNAME', # ipv4 주소는 A, dns 는 CNAME ,
-                        'TTL': 300,
-                        'ResourceRecords': [
-                            {
-                                'Value': cloud_front
-                            },
-                        ],
-                    }
-                },
-            ]
-        }
-    )
+
+def invalidate_cloudfront_distribution(service_name, cloud_front_dns):
+
+    # Boto3 클라이언트 생성
+    cloudfront_client = session.client('cloudfront')
+    # CloudFront 배포 목록 가져오기
+    response = cloudfront_client.list_distributions()
+    distribution_id = None
+    etag = None
+    distribution_config = None
+    try:
+        for distribution in response['DistributionList']['Items']:
+            if distribution['DomainName'] == cloud_front_dns:
+                distribution_id = distribution['Id']
+                distribution_config = cloudfront_client.get_distribution_config(
+                    Id=distribution_id
+                    )
+                viewer_certificate = distribution_config['DistributionConfig'].get('ViewerCertificate', {})
+                ssl_certificate_id = viewer_certificate.get('Certificate')
+                print(f"ssssssssssssssssss1{viewer_certificate} ")
+                print(f"ssssssssssssssssss{ssl_certificate_id} ")
+                etag=distribution_config['ETag']
+                break
+    
+    # SSL 옵션 제거
+    #print(f"sssssssssssslllllllll{distribution_config['DistributionConfig']['ViewerCertificate']['SSLCertificateId']}")
+        distribution_config['DistributionConfig']['ViewerCertificate']['CloudFrontDefaultCertificate'] = True
+        distribution_config['DistributionConfig']['ViewerCertificate']['ACMCertificateArn'] = ''
+        distribution_config['DistributionConfig']['ViewerCertificate']['Certificate'] = ''
+        distribution_config['DistributionConfig']['ViewerCertificate']['CertificateSource'] = 'cloudfront'
+
+    
+    # CloudFront 배포 정보 가져오기
+        distribution_config = cloudfront_client.get_distribution_config(
+            Id=distribution_id
+        )
+        cname = [f'{service_name}{MAIN_DOMAIN}', f'www.{service_name}{MAIN_DOMAIN}']
+
+
+        # CNAME 제거
+        aliases = distribution_config['DistributionConfig']['Aliases']['Items']
+        for cname_to_remove in cname:
+            if cname_to_remove in aliases:
+                aliases.remove(cname_to_remove)
+            else:
+                print(f"CNAME '{cname_to_remove}' not found in the distribution.")
+
+        # CloudFront 배포 업데이트 요청
+        distribution_config['DistributionConfig']['Aliases']['Quantity'] = len(aliases)
+        distribution_config['DistributionConfig']['Aliases']['Items'] = aliases
+        # CloudFront 배포 업데이트 요청
+        cloudfront_client.update_distribution(
+            Id=distribution_id,
+            IfMatch=etag,
+            DistributionConfig=distribution_config['DistributionConfig']
+        )
+        print(distribution_config['DistributionConfig']['ViewerCertificate'])
+    except Exception as e :
+        print(f'cloudFront acm : {e}')
+        return False
 
 
 def delete_cloudFront(cloud_front_dns):
@@ -297,6 +363,7 @@ def delete_all_objects_in_bucket(bucket_name):
         print(f"All objects deleted from bucket '{bucket_name}'")
     except Exception as e:
         print(f"Error deleting objects from bucket '{bucket_name}': {e}")
+        return False
 
 
 
@@ -313,6 +380,7 @@ def delete_s3_bucket(bucket_name):
         print(f"S3 bucket '{bucket_name}' deleted successfully.")
     except Exception as e:
         print(f"Error deleting S3 bucket '{bucket_name}': {e}")
+        return False
     
     
     
@@ -329,7 +397,7 @@ def delete_ecr(repository_name):
         return response
     except Exception as e:
         print(f'삭제에 실패했습니다: {e}')
-        return {'error_message': str(e)}
+        return False
     
 @csrf_exempt
 def serviceDelete(request):
@@ -338,13 +406,26 @@ def serviceDelete(request):
     user_data = Serviceaws.objects.get(service_no=serviceId)
     print(user_data.service_name)
     print(user_data.load_balancer_name)
-    delete_domain(user_data.service_name, user_data.cloudfront_dns)
-    delete_s3_bucket(user_data.service_name+MAIN_DOMAIN)
+    if delete_domain(user_data.service_name, user_data.cloudfront_dns) is False:
+        pass
+    if invalidate_cloudfront_distribution(user_data.service_name, user_data.cloudfront_dns) is False:
+        pass
+    if delete_acm.delete_acm(user_data.service_name) is False:
+        pass
+    if delete_s3_bucket(user_data.service_name+MAIN_DOMAIN) is False:
+        pass
     #delete_cloudFront('d23wsehoeia6bo.cloudfront.net')
-    delete_ecr(user_data.service_name)
+    if delete_ecr(user_data.service_name) is False:
+        pass 
+    if try_helm.delete_real_eks_nodegroup(user_data.service_name, 'eks-rockets') is False:
+        pass
+    if try_helm.helm_real_delete(user_data.service_name) is False:
+        pass
     #delete_s3_bucket(user_data.service_name+MAIN_DOMAIN)
     # for i in range (5,10):
     #     delete_s3_bucket(f'iloverocketdan{i}'+MAIN_DOMAIN)
+    #for i in range (33,39):
+    #user_data = Serviceaws.objects.get(service_name='regiontest9')
     
     
     user_data.delete()

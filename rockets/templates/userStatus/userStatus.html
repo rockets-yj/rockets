@@ -704,8 +704,7 @@
       td51.classList.add("serviceInfoThead");
       
       const td52 = document.createElement('td');
-      // td52.innerText = serviceInfo.load_balancer_address;
-      td52.innerText = serviceInfo.load_balancer_address !== undefined ? serviceInfo.load_balancer_address : '';
+      td52.innerText = serviceInfo.load_balancer_name !== undefined ? serviceInfo.load_balancer_name : '';
   
 
       tr5.append(td51, td52);
