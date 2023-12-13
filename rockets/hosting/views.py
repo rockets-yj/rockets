@@ -339,6 +339,8 @@ def all_in_one(request):
         _service.save()
         _service.domain=addDomain(_service_name, _service.cloudfront_dns)
         _service.save()
+        
+        time.sleep(120)
         result = "호스팅에 성공하였습니다."
         
         return render(request, 'hosting/hostingResult.html', {'result' : result, 'dns' : _service.domain})

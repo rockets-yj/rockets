@@ -212,8 +212,8 @@ def addDomain(service_name,cloud_front):
 
 
 
-@csrf_exempt
-def all_in_one(request):
+# @csrf_exempt
+# def all_in_one(request):
     _service_name = request.POST.get('serviceName')
     _service_name = str(_service_name).lower()
     port = 8080

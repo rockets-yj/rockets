@@ -24,7 +24,7 @@ MAIN_DOMAIN = ".rockets-yj.com"
 session = boto3.Session (
     aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
     aws_secret_access_key= os.environ.get('AWS_SECRET_ACCESS_KEY'),
-    region_name= os.environ.get('REGION')
+    region_name= os.environ.get('AWS_REGION')
 )
 
 
@@ -41,29 +41,41 @@ def viewServiceList(request):
 
 @csrf_exempt
 def viewServiceInfoStatus(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         
-        # fixme: 인스턴스 아이디 가져오기!!!!!
-        # todo: id값을 배열로 받아와서 전달하고, js에서 for문으로 체크하기
-        instance_id = 'i-0180313d622396b84'
+        # 1. AWS EC2 인스턴스 목록 조회
         ec2 = boto3.client('ec2')
-        # response = ec2.describe_instances(InstanceIds=[instance_id])
-        # instance_status = response['Reservations'][0]['Instances'][0]['State']['Name']
-        try:
-            response = ec2.describe_instances(InstanceIds=[instance_id])
-            reservation = response['Reservations'][0]
-            instance = reservation['Instances'][0]
-            instance_status = instance['State']['Name']
-        except (IndexError, KeyError):
-            # IndexError: list index out of range
-            # KeyError: 'Reservations' 또는 'Instances' 키가 없는 경우
-            instance_status = 'Status Not Found'
-        print("instance_status:", instance_status)
+        response = ec2.describe_instances()
         
-    else:
-        instance_status = 'terminated'
-    
-    return JsonResponse({'instance_status' : instance_status})
+        # 2. serviceName이 포함된 인스턴스 목록 조회
+        data = json.loads(request.body)
+        svc_name = "eks-rockets-" + data.get('serviceName', '') + "-Node"
+
+        instance_list = [
+            instance['InstanceId']
+            for reservation in response['Reservations']
+            for instance in reservation['Instances']
+            if svc_name in next((tag['Value'] for tag in instance['Tags'] if tag['Key'] == 'Name'), '')
+        ]
+
+        # 3. 인스턴스들의 상태 조회
+        instance_status = {}
+        for instance_id in instance_list:
+            ec2_instance = boto3.resource('ec2').Instance(instance_id)  # 본인의 AWS 리전으로 변경
+            state = ec2_instance.state['Name']
+            instance_status[instance_id] = state
+
+        # print("----------------------------instance_status:", instance_status)
+        # 4. 인스턴스 상태에 따라 overallStatus 결정
+        # 하나라도 running이면 running, 그렇지 않으면 terminated
+        if all(status == 'terminated' for status in instance_status.values()):
+            instance_status = 'terminated'
+        else:
+            instance_status = 'running'
+
+        # overallStatus만 반환
+        response_data = {'overallStatus': instance_status}
+        return JsonResponse(response_data)
         
         
         
@@ -78,62 +90,78 @@ def viewServiceInfo(request):
         serviceListId = data.get('serviceListId')
 
         print("serviceID:",serviceListId)
-    # 사용자의 서비스 하나를 조회
-    serviceData = (
-        Serviceaws.objects
-        .filter(service_no = serviceListId)
-        .prefetch_related('backend_no','region_no', 'db_no')
-    )
-    
-    serviceInfo = [model_to_dict(svc) for svc in serviceData]
-
-    
-    service_info = []
-    service_info_list = []
-    
-    for service in serviceData: 
-        service_info = model_to_dict(service)
-        service_info['region_name'] = service.region_no.region_name
-        service_info['db_name'] = service.db_no.db_name
-        service_info['backend_name'] = service.backend_no.backend_name
-        # today = str(service.create_date)
-        # service_info['today'] = today
-        service_info['create_date'] = str(service.create_date)
-    
-            
-        # 인스턴스 상태 불러오기
-        # fixme: 인스턴스 아이디 가져오기!!!!!
-        instance_id = 'i-0180313d622396b84'
+        
+        # 사용자의 서비스 하나를 조회
+        serviceData = (
+            Serviceaws.objects
+            .filter(service_no = serviceListId)
+            .prefetch_related('backend_no','region_no', 'db_no')
+        )
+        
+        
+        # 1. AWS EC2 인스턴스 목록 조회
         ec2 = boto3.client('ec2')
-        # response = ec2.describe_instances(InstanceIds=[instance_id])
-        # instance_status = response['Reservations'][0]['Instances'][0]['State']['Name']
-        try:
-            response = ec2.describe_instances(InstanceIds=[instance_id])
-            reservation = response['Reservations'][0]
-            instance = reservation['Instances'][0]
-            instance_status = instance['State']['Name']
-        except (IndexError, KeyError):
-            # IndexError: list index out of range
-            # KeyError: 'Reservations' 또는 'Instances' 키가 없는 경우
-            instance_status = 'Status Not Found'
+        response = ec2.describe_instances()
+        
+        serviceInfo = [model_to_dict(svc) for svc in serviceData]
         
         
-        service_info_list.append(service_info)
-        service_info_list.append(instance_status)    
-    
-        # print(instance_status)
-        # print(f"Instance ID {instance_id} is in state: {instance_status}")
+        # 서비스 상세 데이터 조회
+        service_info = []
+        service_info_list = []
+        serviceName = ""
         
-    # json_data = json.dumps(service_info_list)
+        for service in serviceData: 
+            service_info = model_to_dict(service)
+            service_info['region_name'] = service.region_no.region_name
+            service_info['db_name'] = service.db_no.db_name
+            service_info['backend_name'] = service.backend_no.backend_name
+            # today = str(service.create_date)
+            # service_info['today'] = today
+            service_info['create_date'] = str(service.create_date)
+            service_info['service_name'] = service.service_name
+            serviceName = service_info['service_name']
+        
+                
+            # 인스턴스 상태 불러오기
+            # fixme: 인스턴스 아이디 가져오기!!!!!
+            svc_name = "eks-rockets-" + serviceName + "-Node"
 
+            instance_list = [
+                instance['InstanceId']
+                for reservation in response['Reservations']
+                for instance in reservation['Instances']
+                if svc_name in next((tag['Value'] for tag in instance['Tags'] if tag['Key'] == 'Name'), '')
+            ]
+
+            # ec2 = boto3.client('ec2')
+            # response = ec2.describe_instances(InstanceIds=[instance_id])
+            # instance_status = response['Reservations'][0]['Instances'][0]['State']['Name']
+            
+                
+            # 3. 인스턴스들의 상태 조회
+            instance_status = {}
+            for instance_id in instance_list:
+                ec2_instance = boto3.resource('ec2').Instance(instance_id)  # 본인의 AWS 리전으로 변경
+                state = ec2_instance.state['Name']
+                instance_status[instance_id] = state
+                
+            # print("----------------------------instance_status:", instance_status)
+            # 4. 인스턴스 상태에 따라 overallStatus 결정
+            # 하나라도 running이면 running, 그렇지 않으면 terminated
+            if all(status == 'terminated' for status in instance_status.values()):
+                instance_status = 'terminated'
+            else:
+                instance_status = 'running'
+
+            service_info_list.append(service_info)
+            service_info_list.append(instance_status)    
+        
     return JsonResponse({'serviceInfo' : service_info_list}, safe=False)
     
-    #data_to_send = serviceInfo[0]
-    # print(json_data)
     
     
 def delete_domain(service_name, cloud_front):
-    
 
     # Route 53 클라이언트를 생성합니다.
     client = session.client('route53')
