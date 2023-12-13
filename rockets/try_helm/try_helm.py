@@ -182,7 +182,7 @@ def helm_real_delete(service_name):
 
 
 def helm_start(service_name):                                          # helm repo가 잘 생성되면 폴더 삭제 
-    command = f"helm install {service_name} /home/rocket/git-workspace/leegit/rockets/rockets/{service_name}/"
+    command = f"helm install {service_name} /home/rocket/git-workspace/hwang_git/rockets/rockets/{service_name}/"
     try:
         subprocess.run(command, shell=True, check=True)
         delete_folder(service_name)
@@ -201,6 +201,7 @@ def get_load_balancer_dns(service_name):                               # 생성�
         # JSON 형식으로 반환된 결과 파싱
         response_json = json.loads(result.stdout)
         load_balancer_dns = response_json['LoadBalancers'][0]['DNSName']
+        print(load_balancer_dns)
 
         return load_balancer_dns
     
